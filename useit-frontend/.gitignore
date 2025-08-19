@@ -37,3 +37,8 @@ yarn-error.log*
 # Environment files
 .env
 .env.*
+
+obj/
+bin/
+*.dll
+

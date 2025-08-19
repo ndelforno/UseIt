@@ -1,0 +1,19 @@
+# ASP.NET Core
+bin/
+obj/
+*.db
+*.db-shm
+*.db-wal
+*.user
+*.suo
+*.vs/
+.vscode/
+*.dll
+obj/
+
+# OS files
+.DS_Store
+
+# Environment files
+.env
+.env.*
