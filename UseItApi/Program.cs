@@ -30,14 +30,13 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+using var scope = app.Services.CreateScope();
+var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+DbSeeder.Seed(dbContext);
+
 app.UseHttpsRedirection();
 
 app.MapControllers();
 app.UseCors("AllowFrontend");
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
