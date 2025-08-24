@@ -12,9 +12,12 @@ function App() {
   return (
     <BrowserRouter>
       <Header />
-      {tools?.map(tool => (
+      <div className="pt-20 flex flex-wrap justify-center">
+        {tools?.map(tool => (
         <ToolCard key={tool.id} {...tool} /> 
       ))}
+      </div>
+      
     </BrowserRouter>
   )
 }

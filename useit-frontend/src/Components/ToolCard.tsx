@@ -14,7 +14,7 @@ export default function ToolCard(tool : Tool) {
         </p>
       </div>
       <div className="px-6 pt-4 pb-2">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button className="bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded">
           {tool.IsAvailable ? 'Borrow' : 'Request'}
         </button>
       </div>
