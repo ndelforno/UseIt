@@ -2,13 +2,16 @@ using Microsoft.EntityFrameworkCore;
 using UseItApi.Data;
 
 var builder = WebApplication.CreateBuilder(args);
+var allowedOrigins = builder.Environment.IsDevelopment()
+    ? ["http://localhost:5173"]
+    : new[] { "https://useit.app" };
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5174") // Vite frontend
+            policy.WithOrigins(allowedOrigins) /
                   .AllowAnyMethod()
                   .AllowAnyHeader();
         });
@@ -32,6 +35,7 @@ if (app.Environment.IsDevelopment())
 
 using var scope = app.Services.CreateScope();
 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+dbContext.Database.Migrate();
 DbSeeder.Seed(dbContext);
 
 app.UseHttpsRedirection();

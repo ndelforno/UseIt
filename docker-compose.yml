@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  backend:
+    build:
+      context: ./UseItApi
+    container_name: useit-backend
+    ports:
+      - "5062:5062"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Default=Data Source=/data/useit.db
+    volumes:
+      - ./UseItApi/Data:/data
+
+  frontend:
+    build:
+      context: ./useit-frontend
+    container_name: useit-frontend
+    ports:
+      - "5173:80"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:5062/api
+    depends_on:
+      - backend
