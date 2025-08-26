@@ -1,12 +1,15 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import './App.css'
-import Header from './Components/Header'
-import { api } from './Api';
-import type { Tool } from './Types/Tool';
-import ToolCard from './Components/ToolCard';
-import Login from './Pages/Login';
-import Register from './Pages/Register';
-import { useEffect, useState } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import "./App.css";
+import { api } from "./Api";
+import type { Tool } from "./Types/Tool";
+import ToolCard from "./Components/ToolCard";
+import Login from "./Pages/Login";
+import Register from "./Pages/Register";
+import { useEffect, useState } from "react";
+import Landing from "./Pages/Landing";
+import Header from "./Components/Header";
+import { Separator } from "./Components/ui/separator";
+import Footer from "./Components/Footer";
 
 function App() {
   const [tools, setTools] = useState<Tool[]>([]);
@@ -17,35 +20,26 @@ function App() {
 
     if (token) {
       api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      api.get<Tool[]>("/tool").then(res => setTools(res.data)).catch(() => {});
+      api
+        .get<Tool[]>("/tool")
+        .then((res) => setTools(res.data))
+        .catch(() => {});
     }
   }, []);
 
   return (
     <BrowserRouter>
       <Header />
+      <Landing />
+      <Separator />
+      <Footer />
       <Routes>
-        {!isLoggedIn ? (
-          <>
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-            <Route path="*" element={<Navigate to="/login" />} />
-          </>
-        ) : (
-          <>
-            <Route
-              path="/"
-              element={
-                <div className="pt-20 flex flex-wrap justify-center bg-gray-100">
-                  {tools.map((tool) => (
-                    <ToolCard key={tool.id} {...tool} />
-                  ))}
-                </div>
-              }
-            />
-            <Route path="*" element={<Navigate to="/" />} />
-          </>
-        )}
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/login"
+          element={<Login setIsLoggedIn={setIsLoggedIn} />}
+        />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );
