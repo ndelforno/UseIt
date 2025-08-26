@@ -6,3 +6,16 @@ export const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+export const loginUser = async (email: string, password: string) => {
+  const res = await api.post("/auth/login", { email, password });
+  if (res.status !== 200) throw new Error("Login failed");
+  const data = await res.data;
+  return data.token;
+};
+
+export const registerUser = async (email: string, password: string) => {
+  const res = await api.post("/auth/register", { email, password });
+  if (res.status !== 200) throw new Error("Register failed");
+  return res.data;
+};
