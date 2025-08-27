@@ -10,6 +10,7 @@ import Landing from "./Pages/Landing";
 import Header from "./Components/Header";
 import { Separator } from "./Components/ui/separator";
 import Footer from "./Components/Footer";
+import RootLayout from "./Components/RootLayout";
 
 function App() {
   const [tools, setTools] = useState<Tool[]>([]);
@@ -29,17 +30,16 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Header />
-      <Landing />
-      <Separator />
-      <Footer />
       <Routes>
-        <Route path="/register" element={<Register />} />
-        <Route
-          path="/login"
-          element={<Login setIsLoggedIn={setIsLoggedIn} />}
-        />
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route element={<RootLayout />}>
+          <Route index element={<Landing />} />
+          <Route path="register" element={<Register />} />
+          <Route
+            path="login"
+            element={<Login setIsLoggedIn={setIsLoggedIn} />}
+          />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
