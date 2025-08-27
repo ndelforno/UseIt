@@ -8,7 +8,6 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-2">
               <LogoMark className="w-7 h-7" />
-              <span className="font-semibold">UseIt</span>
             </div>
             <p className="mt-3 text-slate-600">Borrow better. Share smarter.</p>
           </div>

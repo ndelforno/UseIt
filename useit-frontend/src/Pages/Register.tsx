@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { AuthForm } from "../Components/AuthForm";
 import { registerUser } from "../Api";
 
-
 export default function Register() {
   const [formData, setFormData] = useState({ email: "", password: "" });
 
@@ -16,5 +15,17 @@ export default function Register() {
     }
   };
 
-  return <AuthForm title="Register" onSubmit={handleRegister} formData={formData} setFormData={setFormData} />;
+  return (
+    <>
+      <p>
+        Already have an account ? <a href="/login">Login</a>
+      </p>
+      <AuthForm
+        title="Register"
+        onSubmit={handleRegister}
+        formData={formData}
+        setFormData={setFormData}
+      />
+    </>
+  );
 }

@@ -3,11 +3,7 @@ import { AuthForm } from "../Components/AuthForm";
 import { loginUser } from "../Api";
 import { useNavigate } from "react-router-dom";
 
-interface LoginProps {
-  setIsLoggedIn: (value: boolean) => void;
-}
-
-export default function Login({ setIsLoggedIn }: LoginProps) {
+export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
 
@@ -16,7 +12,6 @@ export default function Login({ setIsLoggedIn }: LoginProps) {
     try {
       const token = await loginUser(formData.email, formData.password);
       localStorage.setItem("token", token);
-      setIsLoggedIn(true);
       alert("Login successful!");
       navigate("/");
     } catch (err) {
