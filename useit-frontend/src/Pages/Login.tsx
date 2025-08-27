@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { AuthForm } from "../Components/AuthForm";
 import { loginUser } from "../Api";
-import { Navigate } from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 
 interface LoginProps {
   setIsLoggedIn: (value: boolean) => void;
@@ -9,6 +9,7 @@ interface LoginProps {
 
 export default function Login({ setIsLoggedIn }: LoginProps) {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,11 +18,18 @@ export default function Login({ setIsLoggedIn }: LoginProps) {
       localStorage.setItem("token", token);
       setIsLoggedIn(true);
       alert("Login successful!");
-      Navigate({to: '/'});
+      navigate("/");
     } catch (err) {
       alert("Login failed");
     }
   };
 
-  return <AuthForm title="Login" onSubmit={handleLogin} formData={formData} setFormData={setFormData} />;
+  return (
+    <AuthForm
+      title="Login"
+      onSubmit={handleLogin}
+      formData={formData}
+      setFormData={setFormData}
+    />
+  );
 }
