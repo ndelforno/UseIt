@@ -1,9 +1,17 @@
 import React, { useState } from "react";
 import { AuthForm } from "../Components/AuthForm";
 import { registerUser } from "../Api";
+import { useAuth } from "../Components/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
+
+  if (isLoggedIn) {
+    navigate("/");
+  }
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();

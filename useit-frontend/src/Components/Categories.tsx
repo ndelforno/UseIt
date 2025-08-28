@@ -1,4 +1,14 @@
-import { Card, CardHeader, CardTitle, CardDescription } from "./ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardImage,
+} from "./ui/card";
+import woodworkingImage from "../assets/woodworking.jpg";
+import outdoorImage from "../assets/gardening.jpg";
+import renovationImage from "../assets/renovation.jpg";
+import autoImage from "../assets/mechanic.jpg";
 
 export default function Categories() {
   return (
@@ -9,13 +19,30 @@ export default function Categories() {
         </h2>
         <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {[
-            { t: "Woodworking", d: "Saws, sanders, routers" },
-            { t: "Outdoor & Garden", d: "Mowers, trimmers, aerators" },
-            { t: "Renovation", d: "Drills, nailers, ladders" },
-            { t: "Auto & Bikes", d: "Jacks, stands, wrenches" },
+            {
+              t: "Woodworking",
+              d: "Saws, sanders, routers",
+              i: woodworkingImage,
+            },
+            {
+              t: "Outdoor & Garden",
+              d: "Mowers, trimmers, aerators",
+              i: outdoorImage,
+            },
+            {
+              t: "Renovation",
+              d: "Drills, nailers, ladders",
+              i: renovationImage,
+            },
+            {
+              t: "Auto & Bikes",
+              d: "Jacks, stands, wrenches",
+              i: autoImage,
+            },
           ].map((c) => (
             <Card key={c.t} className="hover:border-amber-400 transition">
               <CardHeader>
+                <CardImage src={c.i} alt="Toolbox" />
                 <CardTitle className="text-base">{c.t}</CardTitle>
                 <CardDescription>{c.d}</CardDescription>
               </CardHeader>

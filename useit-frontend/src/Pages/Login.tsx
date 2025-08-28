@@ -7,7 +7,11 @@ import { useAuth } from "../Components/AuthContext";
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
-  const { setIsLoggedIn } = useAuth();
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
+
+  if (isLoggedIn) {
+    navigate("/");
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
