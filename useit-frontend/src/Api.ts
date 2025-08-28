@@ -19,3 +19,9 @@ export const registerUser = async (email: string, password: string) => {
   if (res.status !== 200) throw new Error("Register failed");
   return res.data;
 };
+
+export const getCurrentUser = async () => {
+  const res = await api.get("/user/me");
+  if (res.status !== 200) throw new Error("Failed to fetch user");
+  return res.data;
+};

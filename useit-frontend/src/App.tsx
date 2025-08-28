@@ -11,10 +11,10 @@ import Header from "./Components/Header";
 import { Separator } from "./Components/ui/separator";
 import Footer from "./Components/Footer";
 import RootLayout from "./Components/RootLayout";
+import MyAccount from "./Pages/MyAccount";
 
 function App() {
   const [tools, setTools] = useState<Tool[]>([]);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -34,10 +34,8 @@ function App() {
         <Route element={<RootLayout />}>
           <Route index element={<Landing />} />
           <Route path="register" element={<Register />} />
-          <Route
-            path="login"
-            element={<Login setIsLoggedIn={setIsLoggedIn} />}
-          />
+          <Route path="login" element={<Login />} />
+          <Route path="myaccount" element={<MyAccount />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

@@ -1,7 +1,11 @@
+import { Link } from "react-router-dom";
 import { LogoMark } from "./LogoMark";
 import { Button } from "./ui/button";
+import AvatarMenu from "./ui/AvatarMenu";
+import { useAuth } from "./AuthContext";
 
 export default function Header() {
+  const { isLoggedIn } = useAuth();
   return (
     <header className="sticky top-0 z-50 bg-white/70 backdrop-blur border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -23,12 +27,20 @@ export default function Header() {
               FAQ
             </a>
           </nav>
-          <div className="flex items-center gap-3">
-            <a href="/login" className="text-sm hover:text-amber-700">
-              Log in
-            </a>
-            <Button className="rounded-full px-4">Get started</Button>
-          </div>
+          {isLoggedIn ? (
+            <>
+              <AvatarMenu />
+            </>
+          ) : (
+            <div className="flex items-center gap-3">
+              <a href="/login" className="text-sm hover:text-amber-700">
+                Log in
+              </a>
+              <Link to="/register">
+                <Button className="rounded-full px-4">Get started</Button>
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </header>
