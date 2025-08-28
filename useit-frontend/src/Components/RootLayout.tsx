@@ -5,13 +5,13 @@ import { Separator } from "./ui/separator";
 
 export default function RootLayout() {
   return (
-    <>
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <main>
+      <main className="flex-grow">
         <Outlet />
       </main>
       <Separator />
       <Footer />
-    </>
+    </div>
   );
 }
