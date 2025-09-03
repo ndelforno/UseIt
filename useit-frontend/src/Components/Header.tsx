@@ -26,6 +26,9 @@ export default function Header() {
             <a href="/#faq" className="hover:text-amber-700">
               FAQ
             </a>
+            <Link to="/tools" className="hover:text-amber-700">
+              All tools
+            </Link>
           </nav>
           {isLoggedIn ? (
             <>

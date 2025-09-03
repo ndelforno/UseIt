@@ -25,3 +25,9 @@ export const getCurrentUser = async () => {
   if (res.status !== 200) throw new Error("Failed to fetch user");
   return res.data;
 };
+
+export const fetchTools = async () => {
+  const res = await api.get("/tool");
+  if (res.status !== 200) throw new Error("Failed to fetch tools");
+  return res.data;
+};

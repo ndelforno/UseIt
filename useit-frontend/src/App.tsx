@@ -1,38 +1,19 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
-import { api } from "./Api";
-import type { Tool } from "./Types/Tool";
-import ToolCard from "./Components/ToolCard";
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
-import { useEffect, useState } from "react";
 import Landing from "./Pages/Landing";
-import Header from "./Components/Header";
-import { Separator } from "./Components/ui/separator";
-import Footer from "./Components/Footer";
 import RootLayout from "./Components/RootLayout";
 import MyAccount from "./Pages/MyAccount";
+import Tools from "./Pages/Tools";
 
 function App() {
-  const [tools, setTools] = useState<Tool[]>([]);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      api
-        .get<Tool[]>("/tool")
-        .then((res) => setTools(res.data))
-        .catch(() => {});
-    }
-  }, []);
-
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<RootLayout />}>
           <Route index element={<Landing />} />
+          <Route path="tools" element={<Tools />} />
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="myaccount" element={<MyAccount />} />
