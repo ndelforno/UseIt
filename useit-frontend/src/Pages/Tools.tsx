@@ -21,7 +21,12 @@ export default function Tools() {
           <p>Here you can browse tools.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
             {tools.map((tool) => (
-              <ListingCard title={tool.name} area="" price="$6" />
+              <ListingCard
+                title={tool.name}
+                area=""
+                price={tool.price}
+                imageUrl={tool.imageUrl}
+              />
             ))}
           </div>
         </div>
