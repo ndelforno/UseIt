@@ -2,7 +2,7 @@ import axios from "axios";
 import { Tool } from "./Types/Tool";
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_API_BASE_URL + "/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -55,4 +55,22 @@ export const fetchMyTools = async () => {
   });
   if (res.status !== 200) throw new Error("Failed to fetch your tools");
   return res.data;
+};
+
+export const uploadImage = async (file: File) => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found");
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await api.post("/upload/uploadImage", formData, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  if (res.status !== 200) throw new Error("Image upload failed");
+  return res.data.imageUrl;
 };

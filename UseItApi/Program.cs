@@ -60,6 +60,7 @@ DbSeeder.Seed(dbContext);
 app.UseHttpsRedirection();
 
 app.MapControllers();
+app.UseStaticFiles();
 app.UseCors("AllowFrontend");
 
 app.Run();

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addTool } from "../Api";
+import { addTool, uploadImage } from "../Api";
 import { Tool } from "../Types/Tool";
 import { useAuth } from "../Components/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -20,7 +20,7 @@ export default function AddListing() {
   const [price, setPrice] = useState<string>("");
   const [postalCode, setPostalCode] = useState("");
   const [area, setArea] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [image, setImage] = useState<File | null>(null);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -48,14 +48,29 @@ export default function AddListing() {
     setPrice("");
     setPostalCode("");
     setArea("");
-    setImageUrl("");
+    setImage(null);
     setErrors({});
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.length) {
+      setImage(e.target.files[0]);
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSuccessMsg("");
     if (!validate()) return;
+
+    let imageUrl = "";
+
+    if (image) {
+      const formData = new FormData();
+      formData.append("file", image);
+
+      imageUrl = await uploadImage(image);
+    }
 
     const tool: NewTool = {
       name: name.trim(),
@@ -188,33 +203,13 @@ export default function AddListing() {
       </div>
 
       <div>
-        <input
-          type="url"
-          placeholder="Image URL (optional)"
-          value={imageUrl}
-          onChange={(e) => setImageUrl(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-        {errors.imageUrl && (
-          <p className="text-xs text-red-600 mt-1">{errors.imageUrl}</p>
-        )}
-        {imageUrl && !errors.imageUrl && (
-          <div className="mt-2">
-            <img
-              src={imageUrl}
-              alt="Preview"
-              className="w-full h-40 object-cover rounded border"
-              onError={() =>
-                setErrors((p) => ({ ...p, imageUrl: "Image failed to load." }))
-              }
-              onLoad={() =>
-                setErrors((p) => {
-                  const { imageUrl: _imgErr, ...rest } = p;
-                  return rest;
-                })
-              }
-            />
-          </div>
+        <input type="file" accept="image/*" onChange={handleFileChange} />
+        {image && (
+          <img
+            src={URL.createObjectURL(image)}
+            alt="preview"
+            className="w-full p-2 border rounded"
+          />
         )}
       </div>
 

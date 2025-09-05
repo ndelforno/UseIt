@@ -16,7 +16,11 @@ export function ListingCard({
   return (
     <Card className="overflow-hidden hover:shadow-md transition">
       {imageUrl ? (
-        <img src={imageUrl} alt={title} className="h-28 w-full object-cover" />
+        <img
+          src={`${import.meta.env.VITE_API_BASE_URL}${imageUrl}`}
+          alt={title}
+          className="h-28 w-full object-cover"
+        />
       ) : (
         <div className="h-28 bg-gradient-to-br from-slate-200 to-slate-100" />
       )}
