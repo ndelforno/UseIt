@@ -6,6 +6,7 @@ import Landing from "./Pages/Landing";
 import RootLayout from "./Components/RootLayout";
 import MyAccount from "./Pages/MyAccount";
 import Tools from "./Pages/Tools";
+import AddListing from "./Pages/AddListing";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="myaccount" element={<MyAccount />} />
+          <Route path="addlisting" element={<AddListing />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
 
 export default function AvatarMenu() {
@@ -9,8 +9,10 @@ export default function AvatarMenu() {
   const { setIsLoggedIn } = useAuth();
 
   const handleSignOut = () => {
+    localStorage.removeItem("token");
     setIsLoggedIn(false);
     navigate("/");
+    setOpen(false);
   };
 
   return (
@@ -29,13 +31,18 @@ export default function AvatarMenu() {
 
       {open && (
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-50">
-          <Link
-            to="/myaccount"
-            className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
-            onClick={() => setOpen(false)}
+          <button
+            className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+            onClick={() => navigate("/myaccount")}
           >
             My Account
-          </Link>
+          </button>
+          <button
+            className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+            onClick={() => navigate("/addlisting")}
+          >
+            Add Listing
+          </button>
           <button
             onClick={handleSignOut}
             className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"

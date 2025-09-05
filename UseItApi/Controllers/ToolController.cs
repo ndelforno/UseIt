@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using UseItApi.Data;
-
 namespace UseItApi.Controllers;
 
 [ApiController]
@@ -32,13 +31,17 @@ public class ToolController : ControllerBase
         return Ok(tool);
     }
 
-    [HttpPost]
+    [HttpPost("createTool")]
     public IActionResult CreateTool([FromBody] Tool tool)
     {
+
         if (tool == null)
         {
             return BadRequest();
         }
+
+        var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+        tool.Owner = userId;
 
         _context.Tools.Add(tool);
         _context.SaveChanges();
@@ -62,7 +65,6 @@ public class ToolController : ControllerBase
 
         existingTool.Name = tool.Name;
         existingTool.Description = tool.Description;
-        existingTool.Owner = tool.Owner;
         existingTool.IsAvailable = tool.IsAvailable;
 
         _context.SaveChanges();

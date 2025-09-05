@@ -10,4 +10,6 @@ public class Tool
     public string Category { get; set; } = "";
     public string ImageUrl { get; set; } = "";
     public string Price { get; set; } = "";
+    public string PostalCode { get; set; } = "";
+    public string Area { get; set; } = "";
 }

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Tool } from "./Types/Tool";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -21,7 +22,11 @@ export const registerUser = async (email: string, password: string) => {
 };
 
 export const getCurrentUser = async () => {
-  const res = await api.get("/user/me");
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found");  
+  const res = await api.get("/user/me", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   if (res.status !== 200) throw new Error("Failed to fetch user");
   return res.data;
 };
@@ -29,5 +34,15 @@ export const getCurrentUser = async () => {
 export const fetchTools = async () => {
   const res = await api.get("/tool");
   if (res.status !== 200) throw new Error("Failed to fetch tools");
+  return res.data;
+};
+
+export const addTool = async (tool: Tool) => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found");
+  const res = await api.post("/tool/createTool", tool, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (res.status !== 201) throw new Error("Failed to add tool");
   return res.data;
 };

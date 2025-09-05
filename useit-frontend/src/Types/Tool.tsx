@@ -2,11 +2,12 @@ type Tool = {
   id: string;
   name: string;
   description: string;
-  owner: string;
-  IsAvailable: boolean;
+  isAvailable: boolean;
   category: string;
   imageUrl: string;
   price: string;
+  area: string;
+  postalCode: string;
 };
 
 export type { Tool };
