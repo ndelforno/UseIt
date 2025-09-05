@@ -46,3 +46,13 @@ export const addTool = async (tool: Tool) => {
   if (res.status !== 201) throw new Error("Failed to add tool");
   return res.data;
 };
+
+export const fetchMyTools = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found");
+  const res = await api.get("/tool/myTools", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (res.status !== 200) throw new Error("Failed to fetch your tools");
+  return res.data;
+};

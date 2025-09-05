@@ -1,10 +1,18 @@
 import { useState } from "react";
 import { addTool } from "../Api";
 import { Tool } from "../Types/Tool";
+import { useAuth } from "../Components/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 type NewTool = Omit<Tool, "id"> & { id?: string };
 
 export default function AddListing() {
+  const { isLoggedIn } = useAuth();
+  const navigate = useNavigate();
+  if (!isLoggedIn) {
+    navigate("/login");
+  }
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");

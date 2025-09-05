@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UseItApi.Data;
 namespace UseItApi.Controllers;
@@ -20,6 +21,20 @@ public class ToolController : ControllerBase
         return Ok(tools);
     }
 
+    [Authorize]
+    [HttpGet("myTools")]
+    public IActionResult GetMyTools()
+    {
+        var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+        if (userId == null)
+        {
+            return Unauthorized();
+        }
+
+        var tools = _context.Tools.Where(t => t.Owner == userId).ToList();
+        return Ok(tools);
+    }
+
     [HttpGet("{id}")]
     public IActionResult GetToolById(int id)
     {
@@ -31,6 +46,7 @@ public class ToolController : ControllerBase
         return Ok(tool);
     }
 
+    [Authorize]
     [HttpPost("createTool")]
     public IActionResult CreateTool([FromBody] Tool tool)
     {
