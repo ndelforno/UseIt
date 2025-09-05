@@ -3,6 +3,7 @@ import { addTool } from "../Api";
 import { Tool } from "../Types/Tool";
 import { useAuth } from "../Components/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { TOOL_CATEGORIES } from "../Types/Constants";
 
 type NewTool = Omit<Tool, "id"> & { id?: string };
 
@@ -124,13 +125,22 @@ export default function AddListing() {
       </div>
 
       <div>
-        <input
-          type="text"
-          placeholder="Category (e.g., Saw, Drill)"
+        <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
           className="w-full p-2 border rounded"
-        />
+          required
+        >
+          <option value="">Select a category</option>
+          {TOOL_CATEGORIES.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+        {errors.category && (
+          <p className="text-xs text-red-600 mt-1">{errors.category}</p>
+        )}
       </div>
 
       <div>

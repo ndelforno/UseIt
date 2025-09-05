@@ -1,10 +1,10 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../AuthContext";
 
 export default function AvatarMenu() {
   const [open, setOpen] = useState(false);
-  const menuRef = useRef(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const { setIsLoggedIn } = useAuth();
 
@@ -14,6 +14,19 @@ export default function AvatarMenu() {
     navigate("/");
     setOpen(false);
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="relative" ref={menuRef}>
@@ -33,13 +46,19 @@ export default function AvatarMenu() {
         <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-50">
           <button
             className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-            onClick={() => navigate("/myaccount")}
+            onClick={() => {
+              navigate("/myaccount");
+              setOpen(false);
+            }}
           >
             My Account
           </button>
           <button
             className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
-            onClick={() => navigate("/addlisting")}
+            onClick={() => {
+              navigate("/addlisting");
+              setOpen(false);
+            }}
           >
             Add Listing
           </button>
