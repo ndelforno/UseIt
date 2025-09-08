@@ -1,20 +1,17 @@
 import { Card, CardContent } from "./card";
+import { Link } from "react-router-dom";
 
 interface ListingCardProps {
   title: string;
   area: string;
   price: string;
   imageUrl?: string;
+  id?: string | number; // when provided, card is clickable
 }
 
-export function ListingCard({
-  title,
-  area,
-  price,
-  imageUrl,
-}: ListingCardProps) {
-  return (
-    <Card className="overflow-hidden hover:shadow-md transition">
+export function ListingCard({ title, area, price, imageUrl, id }: ListingCardProps) {
+  const content = (
+    <>
       {imageUrl ? (
         <img
           src={`${import.meta.env.VITE_API_BASE_URL}${imageUrl}`}
@@ -30,6 +27,11 @@ export function ListingCard({
           {area} • {price}/day
         </div>
       </CardContent>
+    </>
+  );
+  return (
+    <Card className={`overflow-hidden hover:shadow-md transition ${id ? "cursor-pointer" : ""}`}>
+      {id ? <Link to={`/tool/${id}`}>{content}</Link> : content}
     </Card>
   );
 }

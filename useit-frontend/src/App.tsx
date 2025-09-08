@@ -8,6 +8,7 @@ import MyAccount from "./Pages/MyAccount";
 import Tools from "./Pages/Tools";
 import AddListing from "./Pages/AddListing";
 import EditListing from "./Pages/EditListing";
+import ToolDetail from "./Pages/ToolDetail";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route element={<RootLayout />}>
           <Route index element={<Landing />} />
           <Route path="tools" element={<Tools />} />
+          <Route path="tool/:id" element={<ToolDetail />} />
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
           <Route path="myaccount" element={<MyAccount />} />

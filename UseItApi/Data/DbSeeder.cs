@@ -18,6 +18,8 @@ public static class DbSeeder
             .RuleFor(t => t.IsAvailable, f => f.Random.Bool())
             .RuleFor(t => t.Category, f => f.PickRandom(new[] { "Woodworking", "Gardening", "Renovation", "Mechanic" }))
             .RuleFor(t => t.ImageUrl, f => f.Image.PicsumUrl())
+            .RuleFor(t => t.PostalCode, f => f.Address.ZipCode())
+            .RuleFor(t => t.Area, f => f.Address.City())
             .RuleFor(t => t.Price, f => f.Commerce.Price(5, 100) + " USD");
 
         var tools = faker.Generate(50);

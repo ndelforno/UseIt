@@ -31,6 +31,7 @@ export default function MyAccount() {
         {tools.map((tool) => (
           <div key={tool.id} className="space-y-2">
             <ListingCard
+              id={tool.id}
               title={tool.name}
               area={tool.area}
               price={tool.price}
