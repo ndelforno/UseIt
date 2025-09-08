@@ -3,6 +3,7 @@ import { useAuth } from "../Components/AuthContext";
 import { fetchMyTools } from "../Api";
 import { Tool } from "../Types/Tool";
 import { ListingCard } from "../Components/ui/ListingCard";
+import { Link } from "react-router-dom";
 
 export default function MyAccount() {
   const [tools, setTools] = useState<Tool[]>([]);
@@ -21,12 +22,20 @@ export default function MyAccount() {
       <h2 className="text-xl font-semibold mt-6 mb-2">Listings</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
         {tools.map((tool) => (
-          <ListingCard
-            title={tool.name}
-            area=""
-            price={tool.price}
-            imageUrl={tool.imageUrl}
-          />
+          <div key={tool.id} className="space-y-2">
+            <ListingCard
+              title={tool.name}
+              area={tool.area}
+              price={tool.price}
+              imageUrl={tool.imageUrl}
+            />
+            <Link
+              to={`/editlisting/${tool.id}`}
+              className="inline-block text-sm text-blue-600 hover:underline"
+            >
+              Edit
+            </Link>
+          </div>
         ))}
       </div>
     </div>

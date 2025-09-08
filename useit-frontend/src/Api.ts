@@ -37,6 +37,12 @@ export const fetchTools = async () => {
   return res.data;
 };
 
+export const fetchToolById = async (id: string | number) => {
+  const res = await api.get(`/tool/${id}`);
+  if (res.status !== 200) throw new Error("Failed to fetch tool");
+  return res.data as Tool;
+};
+
 export const addTool = async (tool: Tool) => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("No token found");
@@ -45,6 +51,16 @@ export const addTool = async (tool: Tool) => {
   });
   if (res.status !== 201) throw new Error("Failed to add tool");
   return res.data;
+};
+
+export const updateTool = async (id: string | number, tool: Tool) => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found");
+  const res = await api.put(`/tool/${id}`, tool, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (res.status !== 204) throw new Error("Failed to update tool");
+  return true;
 };
 
 export const fetchMyTools = async () => {

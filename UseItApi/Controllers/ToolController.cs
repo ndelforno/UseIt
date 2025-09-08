@@ -65,6 +65,7 @@ public class ToolController : ControllerBase
         return CreatedAtAction(nameof(GetToolById), new { id = tool.Id }, tool);
     }
 
+    [Authorize]
     [HttpPut("{id}")]
     public IActionResult UpdateTool(int id, [FromBody] Tool tool)
     {
@@ -79,15 +80,27 @@ public class ToolController : ControllerBase
             return NotFound();
         }
 
+        var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+        if (string.IsNullOrEmpty(userId) || existingTool.Owner != userId)
+        {
+            return Forbid();
+        }
+
         existingTool.Name = tool.Name;
         existingTool.Description = tool.Description;
         existingTool.IsAvailable = tool.IsAvailable;
+        existingTool.Category = tool.Category;
+        existingTool.ImageUrl = tool.ImageUrl;
+        existingTool.Price = tool.Price;
+        existingTool.PostalCode = tool.PostalCode;
+        existingTool.Area = tool.Area;
 
         _context.SaveChanges();
 
         return NoContent();
     }
 
+    [Authorize]
     [HttpDelete("{id}")]
     public IActionResult DeleteTool(int id)
     {
@@ -95,6 +108,12 @@ public class ToolController : ControllerBase
         if (tool == null)
         {
             return NotFound();
+        }
+
+        var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+        if (string.IsNullOrEmpty(userId) || tool.Owner != userId)
+        {
+            return Forbid();
         }
 
         _context.Tools.Remove(tool);

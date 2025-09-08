@@ -7,6 +7,7 @@ import RootLayout from "./Components/RootLayout";
 import MyAccount from "./Pages/MyAccount";
 import Tools from "./Pages/Tools";
 import AddListing from "./Pages/AddListing";
+import EditListing from "./Pages/EditListing";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="myaccount" element={<MyAccount />} />
           <Route path="addlisting" element={<AddListing />} />
+          <Route path="editlisting/:id" element={<EditListing />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>
