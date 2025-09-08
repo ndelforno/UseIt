@@ -105,8 +105,7 @@ export default function EditListing() {
 
       await updateTool(id, updated);
       setSuccessMsg("Listing updated successfully.");
-      // Navigate back to My Account or stay
-      setTimeout(() => navigate("/myaccount"), 800);
+      navigate("/myaccount");
     } catch (err) {
       setErrors((prev) => ({
         ...prev,
@@ -119,7 +118,9 @@ export default function EditListing() {
 
   if (loading) return <div className="p-6 text-center">Loading...</div>;
   if (!tool)
-    return <div className="p-6 text-center">Listing not found or inaccessible.</div>;
+    return (
+      <div className="p-6 text-center">Listing not found or inaccessible.</div>
+    );
 
   return (
     <form
@@ -284,4 +285,3 @@ export default function EditListing() {
     </form>
   );
 }
-

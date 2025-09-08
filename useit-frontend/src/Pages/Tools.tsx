@@ -5,12 +5,15 @@ import { useEffect, useMemo, useState } from "react";
 import { Input } from "../Components/ui/input";
 import { Button } from "../Components/ui/button";
 import { useSearchParams } from "react-router-dom";
+import { TOOL_CATEGORIES } from "../Types/Constants";
 
 export default function Tools() {
   const [tools, setTools] = useState<Tool[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState("");
+  const [category, setCategory] = useState<string>("");
+  const [priceRange, setPriceRange] = useState<string>("any");
 
   useEffect(() => {
     const data = fetchTools();
@@ -19,24 +22,56 @@ export default function Tools() {
 
   useEffect(() => {
     setQuery(searchParams.get("q") || "");
+    setCategory(searchParams.get("cat") || "");
+    setPriceRange(searchParams.get("pr") || "any");
   }, [searchParams]);
+
+  const parsePrice = (p: string): number | null => {
+    if (!p) return null;
+    const match = p.match(/\d+(?:[\.,]\d+)?/);
+    if (!match) return null;
+    return Number(match[0].replace(",", "."));
+  };
+
+  const inPriceRange = (p: string) => {
+    const n = parsePrice(p);
+    if (n == null) return false;
+    switch (priceRange) {
+      case "under10":
+        return n < 10;
+      case "10-20":
+        return n >= 10 && n <= 20;
+      case "20-50":
+        return n > 20 && n <= 50;
+      case "over50":
+        return n > 50;
+      case "any":
+      default:
+        return true;
+    }
+  };
 
   const filtered = useMemo(() => {
     const trimmedQuery = query.trim().toLowerCase();
-    if (!trimmedQuery) return tools;
     return tools.filter((t) => {
+      if (category && t.category !== category) return false;
+      if (!inPriceRange(t.price)) return false;
       const fields = [t.name, t.description, t.category, t.area, t.postalCode]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();
-      return fields.includes(trimmedQuery);
+      return trimmedQuery ? fields.includes(trimmedQuery) : true;
     });
-  }, [tools, query]);
+  }, [tools, query, category, priceRange]);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const q = query.trim();
-    setSearchParams(q ? { q } : {});
+    const params: Record<string, string> = {};
+    if (q) params.q = q;
+    if (category) params.cat = category;
+    if (priceRange && priceRange !== "any") params.pr = priceRange;
+    setSearchParams(params);
   };
 
   if (loading) return <p>Loading...</p>;
@@ -46,17 +81,40 @@ export default function Tools() {
       <h1 className="text-2xl font-bold mb-4">Tools</h1>
       <form
         onSubmit={onSubmit}
-        className="flex flex-col sm:flex-row gap-3 max-w-xl mb-4"
+        className="flex flex-col gap-3 md:flex-row md:items-center md:flex-wrap md:gap-3 max-w-4xl mb-4"
       >
         <Input
           aria-label="Search tools"
           placeholder="Search tools: 'pressure washer'..."
-          className="h-11"
+          className="h-11 md:w-80"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
+        <select
+          className="h-11 border rounded px-2"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option value="">All categories</option>
+          {TOOL_CATEGORIES.map((cat) => (
+            <option key={cat} value={cat}>
+              {cat}
+            </option>
+          ))}
+        </select>
+        <select
+          className="h-11 border rounded px-2"
+          value={priceRange}
+          onChange={(e) => setPriceRange(e.target.value)}
+        >
+          <option value="any">Any price</option>
+          <option value="under10">Under $10</option>
+          <option value="10-20">$10 - $20</option>
+          <option value="20-50">$20 - $50</option>
+          <option value="over50">Over $50</option>
+        </select>
         <Button type="submit" className="h-11 px-5">
-          Search
+          Apply
         </Button>
       </form>
 

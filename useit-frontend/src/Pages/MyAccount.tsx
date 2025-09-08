@@ -37,7 +37,7 @@ export default function MyAccount() {
               price={tool.price}
               imageUrl={tool.imageUrl}
             />
-            <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center gap-3">
               <button
                 onClick={() => {
                   navigate(`/editlisting/${tool.id}`);

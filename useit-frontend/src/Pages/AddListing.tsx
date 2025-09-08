@@ -88,6 +88,7 @@ export default function AddListing() {
       await addTool(tool as Tool);
       setSuccessMsg("Tool added successfully.");
       resetForm();
+      navigate("/myaccount");
     } catch (err) {
       setErrors((prev) => ({
         ...prev,
