@@ -3,8 +3,19 @@ import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Input } from "./ui/input";
 import { ListingCard } from "./ui/ListingCard";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function Hero() {
+  const navigate = useNavigate();
+  const [term, setTerm] = useState("");
+
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const query = term.trim();
+    navigate(query ? `/tools?q=${encodeURIComponent(q)}` : "/tools");
+  };
+
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 -z-10">
@@ -36,12 +47,14 @@ export default function Hero() {
             </p>
             <form
               className="mt-6 flex flex-col sm:flex-row gap-3 max-w-xl"
-              onSubmit={(e) => e.preventDefault()}
+              onSubmit={onSubmit}
             >
               <Input
                 aria-label="Search tools"
                 placeholder="Search tools: 'pressure washer'..."
                 className="h-11"
+                value={term}
+                onChange={(e) => setTerm(e.target.value)}
               />
               <Button type="submit" className="h-11 px-5">
                 Search
