@@ -1,0 +1,32 @@
+{
+    "version": "0.2.0",
+    "compounds": [
+        {
+            "name": "Debug All (Frontend + API)",
+            "configurations": [
+                "Vite: Chrome",
+                ".NET API"
+            ]
+        }
+    ],
+    "configurations": [
+        {
+            "name": "Vite: Chrome",
+            "type": "pwa-chrome",
+            "request": "launch",
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}/useit-frontend/src",
+            "sourceMaps": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "preLaunchTask": "npm: dev"
+        },
+        {
+            "name": "C#: UseItApi [Default Configuration]",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/UseItApi/UseItApi.csproj"
+        }
+    ]
+}

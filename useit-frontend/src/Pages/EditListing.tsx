@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { fetchToolById, updateTool, uploadImage } from "../Api";
-import { Tool } from "../Types/Tool";
+import { fetchToolById, updateTool, uploadImage } from "../api/tools";
+import { submitTool, Tool } from "../Types/Tool";
 import { useAuth } from "../Components/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { TOOL_CATEGORIES } from "../Types/Constants";
@@ -91,7 +91,7 @@ export default function EditListing() {
         newImageUrl = await uploadImage(image);
       }
 
-      const updated: Tool = {
+      const updated: submitTool = {
         id: tool.id,
         name: name.trim(),
         description: description.trim(),

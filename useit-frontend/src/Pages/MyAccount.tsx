@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../Components/AuthContext";
-import { fetchMyTools, deleteTool, fetchMyReservations } from "../Api";
+
 import { Tool } from "../Types/Tool";
 import { Reservation } from "../Types/Reservation";
 import { ListingCard } from "../Components/ui/ListingCard";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { deleteTool, fetchMyTools } from "../api/tools";
+import { fetchMyReservations } from "../api/reservations";
 
 export default function MyAccount() {
   const [tools, setTools] = useState<Tool[]>([]);
@@ -81,7 +83,9 @@ export default function MyAccount() {
               <div className="flex gap-3">
                 {r.tool?.imageUrl ? (
                   <img
-                    src={`${import.meta.env.VITE_API_BASE_URL}${r.tool.imageUrl}`}
+                    src={`${import.meta.env.VITE_API_BASE_URL}${
+                      r.tool.imageUrl
+                    }`}
                     alt={r.tool.name}
                     className="w-20 h-20 object-cover rounded"
                   />
@@ -90,11 +94,16 @@ export default function MyAccount() {
                 )}
                 <div className="flex-1">
                   <div className="font-medium">{r.tool?.name}</div>
-                  <div className="text-sm text-slate-500">{r.tool?.area} • {r.tool?.price}/day</div>
-                  <div className="text-sm mt-1">
-                    {new Date(r.startDate).toLocaleDateString()} — {new Date(r.endDate).toLocaleDateString()}
+                  <div className="text-sm text-slate-500">
+                    {r.tool?.area} • {r.tool?.price}/day
                   </div>
-                  <div className="text-xs mt-1">Status: <span className="uppercase">{r.status}</span></div>
+                  <div className="text-sm mt-1">
+                    {new Date(r.startDate).toLocaleDateString()} —{" "}
+                    {new Date(r.endDate).toLocaleDateString()}
+                  </div>
+                  <div className="text-xs mt-1">
+                    Status: <span className="uppercase">{r.status}</span>
+                  </div>
                 </div>
               </div>
               <div className="mt-2 text-right">

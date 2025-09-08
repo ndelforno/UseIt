@@ -13,7 +13,7 @@ export default function Hero() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const query = term.trim();
-    navigate(query ? `/tools?q=${encodeURIComponent(q)}` : "/tools");
+    navigate(query ? `/tools?q=${encodeURIComponent(query)}` : "/tools");
   };
 
   return (

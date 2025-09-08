@@ -1,4 +1,4 @@
-import { fetchTools } from "../Api";
+import { fetchTools } from "../api/tools";
 import { ListingCard } from "../Components/ui/ListingCard";
 import { Tool } from "../Types/Tool";
 import { useEffect, useMemo, useState } from "react";

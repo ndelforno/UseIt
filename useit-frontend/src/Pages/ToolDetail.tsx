@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { fetchToolById, reserveTool } from "../Api";
+
 import { Tool } from "../Types/Tool";
 import { useAuth } from "../Components/AuthContext";
+import { fetchToolById } from "../api/tools";
+import { reserveTool } from "../api/reservations";
 
 export default function ToolDetail() {
   const { id } = useParams();

@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { addTool, uploadImage } from "../Api";
-import { Tool } from "../Types/Tool";
+
+import { submitTool, Tool } from "../Types/Tool";
 import { useAuth } from "../Components/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { TOOL_CATEGORIES } from "../Types/Constants";
-
-type NewTool = Omit<Tool, "id"> & { id?: string };
+import { addTool, uploadImage } from "../api/tools";
 
 export default function AddListing() {
   const { isLoggedIn } = useAuth();
@@ -72,7 +71,7 @@ export default function AddListing() {
       imageUrl = await uploadImage(image);
     }
 
-    const tool: NewTool = {
+    const tool: submitTool = {
       name: name.trim(),
       description: description.trim(),
       category: category.trim(),

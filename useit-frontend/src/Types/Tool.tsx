@@ -11,4 +11,6 @@ type Tool = {
   owner: number;
 };
 
-export type { Tool };
+type submitTool = Omit<Tool, "id" | "owner"> & { id?: string };
+
+export type { Tool, submitTool };
