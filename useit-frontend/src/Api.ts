@@ -73,6 +73,16 @@ export const fetchMyTools = async () => {
   return res.data;
 };
 
+export const deleteTool = async (id: string | number) => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found");
+  const res = await api.delete(`/tool/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (res.status !== 204) throw new Error("Failed to delete tool");
+  return true;
+};
+
 export const uploadImage = async (file: File) => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("No token found");

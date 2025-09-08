@@ -116,6 +116,21 @@ public class ToolController : ControllerBase
             return Forbid();
         }
 
+        // Delete associated image file if it exists under wwwroot/images
+        var imageUrl = tool.ImageUrl ?? string.Empty;
+        if (!string.IsNullOrWhiteSpace(imageUrl))
+        {
+            var normalized = imageUrl.Replace("\\", "/");
+            if (normalized.StartsWith("/images/", StringComparison.OrdinalIgnoreCase))
+            {
+                var localPath = Path.Combine("wwwroot", normalized.TrimStart('/'));
+                if (System.IO.File.Exists(localPath))
+                {
+                    try { System.IO.File.Delete(localPath); } catch { }
+                }
+            }
+        }
+
         _context.Tools.Remove(tool);
         _context.SaveChanges();
 
