@@ -51,5 +51,31 @@ public partial class ReservationController : ControllerBase
 
         return Created($"api/reservation/{reservation.Id}", reservation);
     }
-}
 
+    [Authorize]
+    [HttpGet("my")]
+    public IActionResult MyReservations()
+    {
+        var renterId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+        if (string.IsNullOrEmpty(renterId)) return Unauthorized();
+
+        var result = _context.Reservations
+            .Where(r => r.RenterId == renterId)
+            .Join(_context.Tools,
+                r => r.ToolId,
+                t => t.Id,
+                (r, t) => new
+                {
+                    r.Id,
+                    r.ToolId,
+                    r.StartDate,
+                    r.EndDate,
+                    r.Status,
+                    Tool = new { t.Id, t.Name, t.ImageUrl, t.Price, t.Area }
+                })
+            .OrderByDescending(r => r.StartDate)
+            .ToList();
+
+        return Ok(result);
+    }
+}

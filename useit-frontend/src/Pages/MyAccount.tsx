@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../Components/AuthContext";
-import { fetchMyTools, deleteTool } from "../Api";
+import { fetchMyTools, deleteTool, fetchMyReservations } from "../Api";
 import { Tool } from "../Types/Tool";
+import { Reservation } from "../Types/Reservation";
 import { ListingCard } from "../Components/ui/ListingCard";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function MyAccount() {
   const [tools, setTools] = useState<Tool[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
   const { user } = useAuth();
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    const data = fetchMyTools();
-    data.then((res) => setTools(res));
+    fetchMyTools().then((res) => setTools(res));
+    fetchMyReservations().then((res) => setReservations(res));
   }, []);
 
   return (
@@ -68,6 +70,45 @@ export default function MyAccount() {
           </div>
         ))}
       </div>
+
+      <h2 className="text-xl font-semibold mt-8 mb-2">My Reservations</h2>
+      {reservations.length === 0 ? (
+        <p className="text-sm text-slate-600">You have no reservations yet.</p>
+      ) : (
+        <div className="mt-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {reservations.map((r) => (
+            <div key={r.id} className="border rounded-lg p-3 bg-white">
+              <div className="flex gap-3">
+                {r.tool?.imageUrl ? (
+                  <img
+                    src={`${import.meta.env.VITE_API_BASE_URL}${r.tool.imageUrl}`}
+                    alt={r.tool.name}
+                    className="w-20 h-20 object-cover rounded"
+                  />
+                ) : (
+                  <div className="w-20 h-20 rounded bg-slate-200" />
+                )}
+                <div className="flex-1">
+                  <div className="font-medium">{r.tool?.name}</div>
+                  <div className="text-sm text-slate-500">{r.tool?.area} • {r.tool?.price}/day</div>
+                  <div className="text-sm mt-1">
+                    {new Date(r.startDate).toLocaleDateString()} — {new Date(r.endDate).toLocaleDateString()}
+                  </div>
+                  <div className="text-xs mt-1">Status: <span className="uppercase">{r.status}</span></div>
+                </div>
+              </div>
+              <div className="mt-2 text-right">
+                <button
+                  className="text-sm text-blue-600 hover:underline"
+                  onClick={() => navigate(`/tool/${r.toolId}`)}
+                >
+                  View tool
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

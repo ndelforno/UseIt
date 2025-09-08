@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Tool } from "./Types/Tool";
+import { Reservation } from "./Types/Reservation";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL + "/api",
@@ -119,4 +120,14 @@ export const reserveTool = async (params: {
   );
   if (res.status !== 201) throw new Error("Failed to reserve tool");
   return res.data;
+};
+
+export const fetchMyReservations = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found");
+  const res = await api.get("/reservation/my", {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (res.status !== 200) throw new Error("Failed to fetch reservations");
+  return res.data as Reservation[];
 };
