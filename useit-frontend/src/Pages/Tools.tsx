@@ -34,17 +34,17 @@ export default function Tools() {
   };
 
   const inPriceRange = (p: string) => {
-    const n = parsePrice(p);
-    if (n == null) return false;
+    const parsedPrice = parsePrice(p);
+    if (parsedPrice == null) return false;
     switch (priceRange) {
       case "under10":
-        return n < 10;
+        return parsedPrice < 10;
       case "10-20":
-        return n >= 10 && n <= 20;
+        return parsedPrice >= 10 && parsedPrice <= 20;
       case "20-50":
-        return n > 20 && n <= 50;
+        return parsedPrice > 20 && parsedPrice <= 50;
       case "over50":
-        return n > 50;
+        return parsedPrice > 50;
       case "any":
       default:
         return true;

@@ -100,3 +100,23 @@ export const uploadImage = async (file: File) => {
   if (res.status !== 200) throw new Error("Image upload failed");
   return res.data.imageUrl;
 };
+
+export const reserveTool = async (params: {
+  toolId: number | string;
+  startDate: string;
+  endDate: string;
+}) => {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("No token found");
+  const res = await api.post(
+    "/reservation",
+    {
+      toolId: Number(params.toolId),
+      startDate: params.startDate,
+      endDate: params.endDate,
+    },
+    { headers: { Authorization: `Bearer ${token}` } }
+  );
+  if (res.status !== 201) throw new Error("Failed to reserve tool");
+  return res.data;
+};

@@ -8,6 +8,7 @@ type Tool = {
   price: string;
   area: string;
   postalCode: string;
+  owner: number;
 };
 
 export type { Tool };

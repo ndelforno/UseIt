@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { fetchToolById } from "../Api";
+import { fetchToolById, reserveTool } from "../Api";
 import { Tool } from "../Types/Tool";
+import { useAuth } from "../Components/AuthContext";
 
 export default function ToolDetail() {
   const { id } = useParams();
   const [tool, setTool] = useState<Tool | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
+  const { user } = useAuth();
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [reserveMsg, setReserveMsg] = useState("");
 
   useEffect(() => {
     const load = async () => {
@@ -27,6 +32,8 @@ export default function ToolDetail() {
   if (loading) return <div className="p-6">Loading...</div>;
   if (error) return <div className="p-6 text-red-600">{error}</div>;
   if (!tool) return <div className="p-6">Tool not found.</div>;
+
+  const isOwner = tool && user && user.id === tool.owner;
 
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-6">
@@ -71,6 +78,64 @@ export default function ToolDetail() {
               {tool.description || "No description provided."}
             </p>
           </div>
+
+          {!isOwner && tool.isAvailable && user && (
+            <div className="mt-6 border-t pt-4">
+              <div className="text-lg font-medium mb-2">Reserve this tool</div>
+              {reserveMsg && (
+                <div className="mb-2 text-green-700 bg-green-50 p-2 rounded text-sm">
+                  {reserveMsg}
+                </div>
+              )}
+              <div className="flex flex-col sm:flex-row gap-3 items-center">
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="border rounded px-2 h-10"
+                />
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="border rounded px-2 h-10"
+                />
+                <button
+                  className="bg-blue-600 text-white rounded px-4 h-10"
+                  onClick={async () => {
+                    setError("");
+                    setReserveMsg("");
+                    if (!startDate || !endDate) {
+                      setError("Please select start and end dates.");
+                      return;
+                    }
+                    try {
+                      await reserveTool({
+                        toolId: id as string,
+                        startDate: new Date(startDate).toISOString(),
+                        endDate: new Date(endDate).toISOString(),
+                      });
+                      setReserveMsg("Reservation confirmed!");
+                      setTool({ ...tool, isAvailable: false });
+                    } catch (e: any) {
+                      setError(e?.message || "Failed to reserve tool.");
+                    }
+                  }}
+                >
+                  Reserve
+                </button>
+              </div>
+            </div>
+          )}
+          {!isOwner && tool.isAvailable && !user && (
+            <div className="mt-6 border-t pt-4 text-sm">
+              Please{" "}
+              <Link to="/login" className="text-blue-600 hover:underline">
+                log in
+              </Link>{" "}
+              to reserve this tool.
+            </div>
+          )}
         </div>
       </div>
     </div>
