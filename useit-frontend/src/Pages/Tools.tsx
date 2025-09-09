@@ -6,19 +6,19 @@ import { Input } from "../Components/ui/input";
 import { Button } from "../Components/ui/button";
 import { useSearchParams } from "react-router-dom";
 import { TOOL_CATEGORIES } from "../Types/Constants";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Tools() {
-  const [tools, setTools] = useState<Tool[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<string>("");
   const [priceRange, setPriceRange] = useState<string>("any");
 
-  useEffect(() => {
-    const data = fetchTools();
-    data.then((res) => setTools(res)).finally(() => setLoading(false));
-  }, []);
+  const { data: tools = [], isLoading, error } = useQuery<Tool[], Error>({
+    queryKey: ["tools"],
+    queryFn: fetchTools,
+    staleTime: 60_000,
+  });
 
   useEffect(() => {
     setQuery(searchParams.get("q") || "");
@@ -74,7 +74,8 @@ export default function Tools() {
     setSearchParams(params);
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p className="text-red-600">Failed to load tools.</p>;
 
   return (
     <div className="p-4">

@@ -4,14 +4,18 @@ import { submitTool, Tool } from "../Types/Tool";
 import { useAuth } from "../Components/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import { TOOL_CATEGORIES } from "../Types/Constants";
+import { useQuery } from "@tanstack/react-query";
 
 export default function EditListing() {
   const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const [loading, setLoading] = useState(true);
-  const [tool, setTool] = useState<Tool | null>(null);
+  const { data: tool, isLoading } = useQuery<Tool, Error>({
+    queryKey: ["tool", id],
+    queryFn: () => fetchToolById(id as string),
+    enabled: !!id,
+  });
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -34,26 +38,19 @@ export default function EditListing() {
   }, [isLoggedIn, navigate]);
 
   useEffect(() => {
-    const load = async () => {
-      if (!id) return;
-      try {
-        const t = await fetchToolById(id);
-        setTool(t);
-        setName(t.name || "");
-        setDescription(t.description || "");
-        setCategory(t.category || "");
-        setPrice(t.price || "");
-        setPostalCode(t.postalCode || "");
-        setArea(t.area || "");
-        setImageUrl(t.imageUrl || "");
-      } catch (e) {
-        setErrors((prev) => ({ ...prev, form: "Failed to load listing." }));
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [id]);
+    if (!tool) return;
+    try {
+      setName(tool.name || "");
+      setDescription(tool.description || "");
+      setCategory(tool.category || "");
+      setPrice(tool.price || "");
+      setPostalCode(tool.postalCode || "");
+      setArea(tool.area || "");
+      setImageUrl(tool.imageUrl || "");
+    } catch {
+      setErrors((prev) => ({ ...prev, form: "Failed to load listing." }));
+    }
+  }, [tool]);
 
   const validate = () => {
     const e: Record<string, string> = {};
@@ -116,7 +113,7 @@ export default function EditListing() {
     }
   };
 
-  if (loading) return <div className="p-6 text-center">Loading...</div>;
+  if (isLoading) return <div className="p-6 text-center">Loading...</div>;
   if (!tool)
     return (
       <div className="p-6 text-center">Listing not found or inaccessible.</div>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../Components/AuthContext";
 
 import { Tool } from "../Types/Tool";
@@ -7,18 +7,21 @@ import { ListingCard } from "../Components/ui/ListingCard";
 import { useNavigate } from "react-router-dom";
 import { deleteTool, fetchMyTools } from "../api/tools";
 import { fetchMyReservations } from "../api/reservations";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function MyAccount() {
-  const [tools, setTools] = useState<Tool[]>([]);
-  const [reservations, setReservations] = useState<Reservation[]>([]);
   const { user } = useAuth();
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetchMyTools().then((res) => setTools(res));
-    fetchMyReservations().then((res) => setReservations(res));
-  }, []);
+  const queryClient = useQueryClient();
+  const { data: tools = [] } = useQuery<Tool[], Error>({
+    queryKey: ["myTools"],
+    queryFn: fetchMyTools,
+  });
+  const { data: reservations = [] } = useQuery<Reservation[], Error>({
+    queryKey: ["myReservations"],
+    queryFn: fetchMyReservations,
+  });
 
   return (
     <div className="p-4">
@@ -60,7 +63,9 @@ export default function MyAccount() {
                   if (!confirmed) return;
                   try {
                     await deleteTool(tool.id);
-                    setTools((prev) => prev.filter((t) => t.id !== tool.id));
+                    await queryClient.invalidateQueries({
+                      queryKey: ["myTools"],
+                    });
                   } catch (e) {
                     setError("Failed to delete listing. Please try again.");
                   }

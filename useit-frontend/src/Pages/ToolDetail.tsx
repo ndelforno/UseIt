@@ -1,38 +1,31 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 
 import { Tool } from "../Types/Tool";
 import { useAuth } from "../Components/AuthContext";
 import { fetchToolById } from "../api/tools";
 import { reserveTool } from "../api/reservations";
+import { useQuery } from "@tanstack/react-query";
 
 export default function ToolDetail() {
   const { id } = useParams();
-  const [tool, setTool] = useState<Tool | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>("");
   const { user } = useAuth();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [reserveMsg, setReserveMsg] = useState("");
+  const {
+    data: tool,
+    isLoading,
+    error,
+  } = useQuery<Tool, Error>({
+    queryKey: ["tool", id],
+    queryFn: () => fetchToolById(id as string),
+    enabled: !!id,
+  });
 
-  useEffect(() => {
-    const load = async () => {
-      if (!id) return;
-      try {
-        const tool = await fetchToolById(id);
-        setTool(tool);
-      } catch (e) {
-        setError("Unable to load tool details.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [id]);
-
-  if (loading) return <div className="p-6">Loading...</div>;
-  if (error) return <div className="p-6 text-red-600">{error}</div>;
+  if (isLoading) return <div className="p-6">Loading...</div>;
+  if (error)
+    return <div className="p-6 text-red-600">{error.message || "Error"}</div>;
   if (!tool) return <div className="p-6">Tool not found.</div>;
 
   const isOwner = tool && user && user.id === tool.owner;
@@ -105,10 +98,9 @@ export default function ToolDetail() {
                 <button
                   className="bg-blue-600 text-white rounded px-4 h-10"
                   onClick={async () => {
-                    setError("");
                     setReserveMsg("");
                     if (!startDate || !endDate) {
-                      setError("Please select start and end dates.");
+                      alert("Please select start and end dates.");
                       return;
                     }
                     try {
@@ -118,9 +110,11 @@ export default function ToolDetail() {
                         endDate: new Date(endDate).toISOString(),
                       });
                       setReserveMsg("Reservation confirmed!");
-                      setTool({ ...tool, isAvailable: false });
+                      // Refresh tool and tools list after reservation
+                      queryClient.invalidateQueries({ queryKey: ["tool", id] });
+                      queryClient.invalidateQueries({ queryKey: ["tools"] });
                     } catch (e: any) {
-                      setError(e?.message || "Failed to reserve tool.");
+                      alert(e?.message || "Failed to reserve tool.");
                     }
                   }}
                 >
