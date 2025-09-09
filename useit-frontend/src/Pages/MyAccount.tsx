@@ -28,56 +28,61 @@ export default function MyAccount() {
       <h1 className="text-2xl font-bold mb-4">My Account</h1>
       <p>Welcome {user?.email} !</p>
       <p>Here you can manage your account settings and view your activity.</p>
-      <h2 className="text-xl font-semibold mt-6 mb-2">Listings</h2>
-      {error && (
-        <div className="p-2 mb-3 rounded bg-red-50 text-red-700 text-sm">
-          {error}
-        </div>
-      )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-        {tools.map((tool) => (
-          <div key={tool.id} className="space-y-2">
-            <ListingCard
-              id={tool.id}
-              title={tool.name}
-              area={tool.area}
-              price={tool.price}
-              imageUrl={tool.imageUrl}
-            />
-            <div className="flex items-center justify-center gap-3">
-              <button
-                onClick={() => {
-                  navigate(`/editlisting/${tool.id}`);
-                }}
-                className="inline-block text-sm text-blue-600 hover:underline"
-              >
-                Edit
-              </button>
-              <button
-                className="inline-block text-sm text-red-600 hover:underline"
-                onClick={async () => {
-                  setError("");
-                  const confirmed = window.confirm(
-                    `Delete "${tool.name}"? This cannot be undone.`
-                  );
-                  if (!confirmed) return;
-                  try {
-                    await deleteTool(tool.id);
-                    await queryClient.invalidateQueries({
-                      queryKey: ["myTools"],
-                    });
-                  } catch (e) {
-                    setError("Failed to delete listing. Please try again.");
-                  }
-                }}
-              >
-                Delete
-              </button>
+      <h2 className="text-xl font-semibold mt-6 mb-2">My Listings</h2>
+      {tools.length === 0 ? (
+        <p className="text-sm text-slate-600">You have no listings yet.</p>
+      ) : (
+        <>
+          {error && (
+            <div className="p-2 mb-3 rounded bg-red-50 text-red-700 text-sm">
+              {error}
             </div>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+            {tools.map((tool) => (
+              <div key={tool.id} className="space-y-2">
+                <ListingCard
+                  id={tool.id}
+                  title={tool.name}
+                  area={tool.area}
+                  price={tool.price}
+                  imageUrl={tool.imageUrl}
+                />
+                <div className="flex items-center justify-center gap-3">
+                  <button
+                    onClick={() => {
+                      navigate(`/editlisting/${tool.id}`);
+                    }}
+                    className="inline-block text-sm text-blue-600 hover:underline"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    className="inline-block text-sm text-red-600 hover:underline"
+                    onClick={async () => {
+                      setError("");
+                      const confirmed = window.confirm(
+                        `Delete "${tool.name}"? This cannot be undone.`
+                      );
+                      if (!confirmed) return;
+                      try {
+                        await deleteTool(tool.id);
+                        await queryClient.invalidateQueries({
+                          queryKey: ["myTools"],
+                        });
+                      } catch (e) {
+                        setError("Failed to delete listing. Please try again.");
+                      }
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-
+        </>
+      )}
       <h2 className="text-xl font-semibold mt-8 mb-2">My Reservations</h2>
       {reservations.length === 0 ? (
         <p className="text-sm text-slate-600">You have no reservations yet.</p>

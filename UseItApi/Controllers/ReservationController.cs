@@ -22,8 +22,9 @@ public partial class ReservationController : ControllerBase
         if (req == null || req.ToolId <= 0)
             return BadRequest("Invalid reservation data");
 
-        if (req.EndDate <= req.StartDate)
-            return BadRequest("End date must be after start date");
+        // Allow same-day reservations; only invalid if end is before start
+        if (req.EndDate < req.StartDate)
+            return BadRequest("End date must be on or after start date");
 
         var renterId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
         if (string.IsNullOrEmpty(renterId)) return Unauthorized();
@@ -32,8 +33,9 @@ public partial class ReservationController : ControllerBase
         if (tool == null) return NotFound("Tool not found");
         if (tool.Owner == renterId) return Forbid();
 
+        // Inclusive overlap check: conflicts if ranges intersect at any date
         var overlaps = _context.Reservations.Any(r => r.ToolId == req.ToolId && r.Status == "Active" &&
-            !(req.EndDate <= r.StartDate || req.StartDate >= r.EndDate));
+            !(req.EndDate < r.StartDate || req.StartDate > r.EndDate));
         if (overlaps) return Conflict("Tool is already reserved for those dates");
 
         var reservation = new Reservation
@@ -46,10 +48,25 @@ public partial class ReservationController : ControllerBase
         };
 
         _context.Reservations.Add(reservation);
-        tool.IsAvailable = false;
         _context.SaveChanges();
 
         return Created($"api/reservation/{reservation.Id}", reservation);
+    }
+
+    // Return active reservations (date ranges) for a given tool
+    [HttpGet("tool/{toolId}")]
+    public IActionResult GetReservationsForTool(int toolId)
+    {
+        var tool = _context.Tools.Find(toolId);
+        if (tool == null) return NotFound("Tool not found");
+
+        var reservations = _context.Reservations
+            .Where(r => r.ToolId == toolId && r.Status == "Active")
+            .Select(r => new { r.Id, r.ToolId, r.StartDate, r.EndDate })
+            .OrderBy(r => r.StartDate)
+            .ToList();
+
+        return Ok(reservations);
     }
 
     [Authorize]

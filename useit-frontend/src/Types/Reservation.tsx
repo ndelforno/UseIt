@@ -10,8 +10,14 @@ export interface Reservation {
   id: number;
   toolId: number;
   startDate: string; // ISO
-  endDate: string;   // ISO
+  endDate: string; // ISO
   status: string;
   tool: ReservationToolSummary;
 }
 
+export interface ToolReservation {
+  id: number;
+  toolId: number;
+  startDate: string; // ISO
+  endDate: string; // ISO
+}

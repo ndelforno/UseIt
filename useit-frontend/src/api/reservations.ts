@@ -1,5 +1,5 @@
 import { api } from "./client";
-import { Reservation } from "../Types/Reservation";
+import { Reservation, ToolReservation } from "../Types/Reservation";
 
 export const reserveTool = async (params: {
   toolId: number | string;
@@ -12,7 +12,7 @@ export const reserveTool = async (params: {
     endDate: params.endDate,
   });
   if (res.status !== 201) throw new Error("Failed to reserve tool");
-  return res.data as Reservation;
+  return res.data;
 };
 
 export const fetchMyReservations = async () => {
@@ -21,3 +21,8 @@ export const fetchMyReservations = async () => {
   return res.data as Reservation[];
 };
 
+export const fetchToolReservations = async (toolId: string | number) => {
+  const res = await api.get(`/reservation/tool/${toolId}`);
+  if (res.status !== 200) throw new Error("Failed to fetch tool reservations");
+  return res.data as ToolReservation[];
+};
