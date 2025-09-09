@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, Navigate, useNavigate } from "react-router-dom";
 
 import { Tool } from "../Types/Tool";
 import { useAuth } from "../Components/AuthContext";
@@ -17,6 +17,8 @@ export default function ToolDetail() {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [reserveMsg, setReserveMsg] = useState("");
+  const navigate = useNavigate();
+
   const {
     data: tool,
     isLoading,
@@ -39,24 +41,36 @@ export default function ToolDetail() {
     return new Date(dt.getFullYear(), dt.getMonth(), dt.getDate());
   };
 
+  const handleReserve = async () => {
+    setReserveMsg("");
+    if (!startDate || !endDate) {
+      alert("Please select start and end dates.");
+      return;
+    }
+    try {
+      await reserveTool({
+        toolId: id as string,
+        startDate: new Date(startDate).toISOString(),
+        endDate: new Date(endDate).toISOString(),
+      });
+      setReserveMsg("Reservation confirmed!");
+      queryClient.invalidateQueries({ queryKey: ["tool", id] });
+      queryClient.invalidateQueries({ queryKey: ["tools"] });
+      queryClient.invalidateQueries({
+        queryKey: ["toolReservations", id],
+      });
+      navigate("/myaccount");
+    } catch (e: any) {
+      alert(e?.message || "Failed to reserve tool.");
+    }
+  };
+
   const disabledIntervals = useMemo(() => {
     return reservations.map((r: ToolReservation) => ({
       start: toDateOnly(r.startDate),
       end: toDateOnly(r.endDate), // inclusive range
     }));
   }, [reservations]);
-
-  const selectionInvalid = useMemo(() => {
-    if (!startDate || !endDate) return false;
-    const s = toDateOnly(startDate).getTime();
-    const e = toDateOnly(endDate).getTime();
-    return reservations.some((r: ToolReservation) => {
-      const rs = toDateOnly(r.startDate).getTime();
-      const re = toDateOnly(r.endDate).getTime();
-      // inclusive overlap: allows single-day reservations and blocks exact matches
-      return !(e < rs || s > re);
-    });
-  }, [reservations, startDate, endDate]);
 
   if (isLoading) return <div className="p-6">Loading...</div>;
   if (error)
@@ -141,39 +155,12 @@ export default function ToolDetail() {
                 />
                 <button
                   className="bg-blue-600 text-white rounded px-4 h-10"
-                  onClick={async () => {
-                    setReserveMsg("");
-                    if (!startDate || !endDate || selectionInvalid) {
-                      alert("Please select start and end dates.");
-                      return;
-                    }
-                    try {
-                      await reserveTool({
-                        toolId: id as string,
-                        startDate: new Date(startDate).toISOString(),
-                        endDate: new Date(endDate).toISOString(),
-                      });
-                      setReserveMsg("Reservation confirmed!");
-                      // Refresh queries after reservation
-                      queryClient.invalidateQueries({ queryKey: ["tool", id] });
-                      queryClient.invalidateQueries({ queryKey: ["tools"] });
-                      queryClient.invalidateQueries({
-                        queryKey: ["toolReservations", id],
-                      });
-                    } catch (e: any) {
-                      alert(e?.message || "Failed to reserve tool.");
-                    }
-                  }}
-                  disabled={!startDate || !endDate || selectionInvalid}
+                  onClick={handleReserve}
+                  disabled={!startDate || !endDate}
                 >
                   Reserve
                 </button>
               </div>
-              {selectionInvalid && (
-                <div className="mt-2 text-sm text-red-600">
-                  These dates are already booked. Please choose others.
-                </div>
-              )}
             </div>
           )}
           {!isOwner && !user && (
