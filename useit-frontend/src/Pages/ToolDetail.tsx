@@ -1,14 +1,19 @@
-import { useMemo, useState } from "react";
-import { useParams, Link, Navigate, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
 
 import { Tool } from "../Types/Tool";
 import { useAuth } from "../Components/AuthContext";
 import { fetchToolById } from "../api/tools";
-import { reserveTool, fetchToolReservations } from "../api/reservations";
+import {
+  reserveTool,
+  fetchToolReservations,
+  updateReservationStatus,
+} from "../api/reservations";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { ToolReservation } from "@/Types/Reservation";
+import { ToolReservation } from "../Types/Reservation";
+import { ReservationStatus } from "../Types/Constants";
 
 export default function ToolDetail() {
   const { id } = useParams();
@@ -17,6 +22,9 @@ export default function ToolDetail() {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [reserveMsg, setReserveMsg] = useState("");
+  const [pendingReservations, setPendingReservations] = useState<
+    ToolReservation[]
+  >([]);
   const navigate = useNavigate();
 
   const {
@@ -72,6 +80,32 @@ export default function ToolDetail() {
     }));
   }, [reservations]);
 
+  const handleReservationRequest = async (
+    status: ReservationStatus,
+    reservationId: number
+  ) => {
+    try {
+      await updateReservationStatus(reservationId, status);
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ["incomingReservations"],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ["toolReservations", id],
+        }),
+      ]);
+    } catch (e: any) {
+      alert(e?.message || "Failed to update reservation");
+    }
+  };
+
+  useEffect(() => {
+    const pendingReservations = reservations.filter(
+      (r) => r.status === ReservationStatus.Pending
+    );
+    setPendingReservations(pendingReservations);
+  }, [reservations]);
+
   if (isLoading) return <div className="p-6">Loading...</div>;
   if (error)
     return <div className="p-6 text-red-600">{error.message || "Error"}</div>;
@@ -122,6 +156,51 @@ export default function ToolDetail() {
               {tool.description || "No description provided."}
             </p>
           </div>
+
+          {isOwner && pendingReservations.length > 0 && (
+            <div className="mt-6 border-t pt-4">
+              <div className="text-lg font-medium mb-2">
+                Pending reservations
+              </div>
+              <div className="space-y-2">
+                {reservations.map((r: ToolReservation) => (
+                  <div
+                    key={r.id}
+                    className="flex items-center justify-between text-sm"
+                  >
+                    <div>
+                      {new Date(r.startDate).toLocaleDateString()} —{" "}
+                      {new Date(r.endDate).toLocaleDateString()}
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        className="px-3 py-1 rounded bg-green-600 text-white"
+                        onClick={() => {
+                          handleReservationRequest(
+                            ReservationStatus.Active,
+                            r.id
+                          );
+                        }}
+                      >
+                        Approve
+                      </button>
+                      <button
+                        className="px-3 py-1 rounded bg-red-600 text-white"
+                        onClick={() => {
+                          handleReservationRequest(
+                            ReservationStatus.Cancelled,
+                            r.id
+                          );
+                        }}
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {!isOwner && user && (
             <div className="mt-6 border-t pt-4">

@@ -1,5 +1,6 @@
 import { api } from "./client";
 import { Reservation, ToolReservation } from "../Types/Reservation";
+import { ReservationStatus } from "@/Types/Constants";
 
 export const reserveTool = async (params: {
   toolId: number | string;
@@ -26,3 +27,13 @@ export const fetchToolReservations = async (toolId: string | number) => {
   if (res.status !== 200) throw new Error("Failed to fetch tool reservations");
   return res.data as ToolReservation[];
 };
+
+export const updateReservationStatus = async (
+  id: number | string,
+  status: ReservationStatus
+) => {
+  const res = await api.post(`/reservation/${id}/status`, { status });
+  if (res.status !== 200) throw new Error("Failed to update reservation status");
+  return res.data as Reservation;
+};
+

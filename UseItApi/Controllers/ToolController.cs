@@ -26,12 +26,26 @@ public class ToolController : ControllerBase
     public IActionResult GetMyTools()
     {
         var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-        if (userId == null)
-        {
-            return Unauthorized();
-        }
+        if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        var tools = _context.Tools.Where(t => t.Owner == userId).ToList();
+        var tools = _context.Tools
+            .Where(t => t.Owner == userId)
+            .Select(t => new UseItApi.Models.MyToolDto
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Description = t.Description,
+                Category = t.Category,
+                ImageUrl = t.ImageUrl,
+                Price = t.Price,
+                PostalCode = t.PostalCode,
+                Area = t.Area,
+                IsAvailable = t.IsAvailable,
+                PendingCount = _context.Reservations.Count(r =>
+                    r.ToolId == t.Id && r.Status == nameof(UseItApi.Data.ReservationStatus.Pending))
+            })
+            .ToList();
+
         return Ok(tools);
     }
 

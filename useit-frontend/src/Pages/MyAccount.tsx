@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../Components/AuthContext";
 
-import { Tool } from "../Types/Tool";
+import { MyTool } from "../Types/Tool";
 import { Reservation } from "../Types/Reservation";
 import { ListingCard } from "../Components/ui/ListingCard";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,7 @@ export default function MyAccount() {
   const [error, setError] = useState<string>("");
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { data: tools = [] } = useQuery<Tool[], Error>({
+  const { data: tools = [] } = useQuery<MyTool[], Error>({
     queryKey: ["myTools"],
     queryFn: fetchMyTools,
   });
@@ -48,6 +48,12 @@ export default function MyAccount() {
                   price={tool.price}
                   imageUrl={tool.imageUrl}
                 />
+                {tool.pendingCount && tool.pendingCount > 0 && (
+                  <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1 text-center">
+                    {tool.pendingCount} pending reservation
+                    {tool.pendingCount > 1 ? "s" : ""}
+                  </div>
+                )}
                 <div className="flex items-center justify-center gap-3">
                   <button
                     onClick={() => {

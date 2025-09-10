@@ -1,3 +1,5 @@
+import { ReservationStatus } from "./Constants";
+
 export interface ReservationToolSummary {
   id: number | string;
   name: string;
@@ -20,4 +22,5 @@ export interface ToolReservation {
   toolId: number;
   startDate: string; // ISO
   endDate: string; // ISO
+  status: ReservationStatus;
 }

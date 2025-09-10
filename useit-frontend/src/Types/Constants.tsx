@@ -10,3 +10,9 @@ export const TOOL_CATEGORIES = [
   "Safety & Support",
   "Other",
 ] as const;
+
+export enum ReservationStatus {
+  Pending = "Pending",
+  Active = "Active",
+  Cancelled = "Cancelled",
+}

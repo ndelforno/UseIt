@@ -1,5 +1,5 @@
 import { api, withMultipart } from "./client";
-import { submitTool, Tool } from "../Types/Tool";
+import { submitTool, Tool, MyTool } from "../Types/Tool";
 
 export const fetchTools = async () => {
   const res = await api.get("/tool");
@@ -28,7 +28,7 @@ export const updateTool = async (id: string | number, tool: submitTool) => {
 export const fetchMyTools = async () => {
   const res = await api.get("/tool/myTools");
   if (res.status !== 200) throw new Error("Failed to fetch your tools");
-  return res.data as Tool[];
+  return res.data as MyTool[];
 };
 
 export const deleteTool = async (id: string | number) => {
@@ -44,4 +44,3 @@ export const uploadImage = async (file: File) => {
   if (res.status !== 200) throw new Error("Image upload failed");
   return res.data.imageUrl as string;
 };
-

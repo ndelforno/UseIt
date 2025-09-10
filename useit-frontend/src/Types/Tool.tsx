@@ -13,4 +13,6 @@ type Tool = {
 
 type submitTool = Omit<Tool, "id" | "owner"> & { id?: string };
 
-export type { Tool, submitTool };
+type MyTool = Tool & { pendingCount?: number };
+
+export type { Tool, submitTool, MyTool };

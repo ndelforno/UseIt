@@ -7,6 +7,6 @@ public class Reservation
     public string RenterId { get; set; } = string.Empty;
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
-    public string Status { get; set; } = "Active"; // Active, Cancelled, Completed
+    public string Status { get; set; } = "Pending";
 }
 
