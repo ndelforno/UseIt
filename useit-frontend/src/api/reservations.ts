@@ -32,7 +32,7 @@ export const updateReservationStatus = async (
   id: string,
   status: ReservationStatus
 ) => {
-  const res = await api.post(`/reservation/${id}/status`, { status });
+  const res = await api.post(`/reservation/${id}/status`, status );
   if (res.status !== 200) throw new Error("Failed to update reservation status");
   return res.data as Reservation;
 };
