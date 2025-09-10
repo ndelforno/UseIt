@@ -8,10 +8,10 @@ type Tool = {
   price: string;
   area: string;
   postalCode: string;
-  owner: number;
+  ownerId: string;
 };
 
-type submitTool = Omit<Tool, "id" | "owner"> & { id?: string };
+type submitTool = Omit<Tool, "id" | "ownerId"> & { id?: string };
 
 type MyTool = Tool & { pendingCount?: number };
 

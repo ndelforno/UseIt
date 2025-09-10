@@ -29,7 +29,7 @@ public class UserController : ControllerBase
     public IActionResult GetCurrentUser()
     {
         var userIdClaim = User.FindFirst("UserId");
-        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
         {
             return Unauthorized();
         }
@@ -52,7 +52,7 @@ public class UserController : ControllerBase
     public IActionResult UpdateCurrentUser([FromBody] User updatedUser)
     {
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
-        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+        if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
         {
             return Unauthorized();
         }

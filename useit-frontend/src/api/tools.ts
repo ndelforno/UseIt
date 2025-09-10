@@ -7,7 +7,7 @@ export const fetchTools = async () => {
   return res.data as Tool[];
 };
 
-export const fetchToolById = async (id: string | number) => {
+export const fetchToolById = async (id: string) => {
   const res = await api.get(`/tool/${id}`);
   if (res.status !== 200) throw new Error("Failed to fetch tool");
   return res.data as Tool;
@@ -19,7 +19,7 @@ export const addTool = async (tool: submitTool) => {
   return res.data as Tool;
 };
 
-export const updateTool = async (id: string | number, tool: submitTool) => {
+export const updateTool = async (id: string, tool: submitTool) => {
   const res = await api.put(`/tool/${id}`, tool);
   if (res.status !== 204) throw new Error("Failed to update tool");
   return true;
@@ -31,7 +31,7 @@ export const fetchMyTools = async () => {
   return res.data as MyTool[];
 };
 
-export const deleteTool = async (id: string | number) => {
+export const deleteTool = async (id: string) => {
   const res = await api.delete(`/tool/${id}`);
   if (res.status !== 204) throw new Error("Failed to delete tool");
   return true;

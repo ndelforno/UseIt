@@ -1,7 +1,7 @@
 import { ReservationStatus } from "./Constants";
 
 export interface ReservationToolSummary {
-  id: number | string;
+  id: string;
   name: string;
   imageUrl?: string;
   price: string;
@@ -9,8 +9,8 @@ export interface ReservationToolSummary {
 }
 
 export interface Reservation {
-  id: number;
-  toolId: number;
+  id: string;
+  toolId: string;
   startDate: string; // ISO
   endDate: string; // ISO
   status: string;
@@ -18,8 +18,8 @@ export interface Reservation {
 }
 
 export interface ToolReservation {
-  id: number;
-  toolId: number;
+  id: string;
+  toolId: string;
   startDate: string; // ISO
   endDate: string; // ISO
   status: ReservationStatus;

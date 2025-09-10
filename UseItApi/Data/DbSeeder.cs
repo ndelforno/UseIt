@@ -13,7 +13,7 @@ public static class DbSeeder
 
         var faker = new Faker<Tool>()
             .RuleFor(t => t.Name, f => f.Commerce.ProductName())
-            .RuleFor(t => t.Owner, f => f.Person.FullName)
+            .RuleFor(t => t.OwnerId, f => Guid.NewGuid())
             .RuleFor(t => t.Description, f => f.Commerce.ProductDescription())
             .RuleFor(t => t.IsAvailable, f => f.Random.Bool())
             .RuleFor(t => t.Category, f => f.PickRandom(new[] { "Woodworking", "Gardening", "Renovation", "Mechanic" }))

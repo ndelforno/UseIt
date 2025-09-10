@@ -25,12 +25,12 @@ public class ToolController : ControllerBase
     [HttpGet("myTools")]
     public IActionResult GetMyTools()
     {
-        var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-        if (string.IsNullOrEmpty(userId)) return Unauthorized();
+        var userIdStr = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+        if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out var userId)) return Unauthorized();
 
         var tools = _context.Tools
-            .Where(t => t.Owner == userId)
-            .Select(t => new UseItApi.Models.MyToolDto
+            .Where(t => t.OwnerId == userId)
+            .Select(t => new Dto.MyToolDto
             {
                 Id = t.Id,
                 Name = t.Name,
@@ -50,7 +50,7 @@ public class ToolController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetToolById(int id)
+    public IActionResult GetToolById(Guid id)
     {
         var tool = _context.Tools.Find(id);
         if (tool == null)
@@ -70,8 +70,9 @@ public class ToolController : ControllerBase
             return BadRequest();
         }
 
-        var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-        tool.Owner = userId;
+        var userIdStr = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+        if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out var userId)) return Unauthorized();
+        tool.OwnerId = userId;
 
         _context.Tools.Add(tool);
         _context.SaveChanges();
@@ -81,7 +82,7 @@ public class ToolController : ControllerBase
 
     [Authorize]
     [HttpPut("{id}")]
-    public IActionResult UpdateTool(int id, [FromBody] Tool tool)
+    public IActionResult UpdateTool(Guid id, [FromBody] Tool tool)
     {
         if (tool == null || tool.Id != id)
         {
@@ -94,8 +95,8 @@ public class ToolController : ControllerBase
             return NotFound();
         }
 
-        var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-        if (string.IsNullOrEmpty(userId) || existingTool.Owner != userId)
+        var userIdStr = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+        if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out var userId) || existingTool.OwnerId != userId)
         {
             return Forbid();
         }
@@ -116,7 +117,7 @@ public class ToolController : ControllerBase
 
     [Authorize]
     [HttpDelete("{id}")]
-    public IActionResult DeleteTool(int id)
+    public IActionResult DeleteTool(Guid id)
     {
         var tool = _context.Tools.Find(id);
         if (tool == null)
@@ -124,8 +125,8 @@ public class ToolController : ControllerBase
             return NotFound();
         }
 
-        var userId = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
-        if (string.IsNullOrEmpty(userId) || tool.Owner != userId)
+        var userIdStr = User.Claims.FirstOrDefault(c => c.Type == "UserId")?.Value;
+        if (string.IsNullOrEmpty(userIdStr) || !Guid.TryParse(userIdStr, out var userId) || tool.OwnerId != userId)
         {
             return Forbid();
         }

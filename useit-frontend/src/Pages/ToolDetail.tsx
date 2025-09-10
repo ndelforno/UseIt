@@ -82,7 +82,7 @@ export default function ToolDetail() {
 
   const handleReservationRequest = async (
     status: ReservationStatus,
-    reservationId: number
+    reservationId: string
   ) => {
     try {
       await updateReservationStatus(reservationId, status);
@@ -111,7 +111,7 @@ export default function ToolDetail() {
     return <div className="p-6 text-red-600">{error.message || "Error"}</div>;
   if (!tool) return <div className="p-6">Tool not found.</div>;
 
-  const isOwner = tool && user && user.id === tool.owner;
+  const isOwner = tool && user && user.id === tool.ownerId;
 
   return (
     <div className="max-w-3xl mx-auto p-4 md:p-6">
