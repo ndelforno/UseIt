@@ -15,7 +15,7 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      login(formData.email, formData.password);
+      await login(formData.email, formData.password);
       alert("Login successful!");
       setIsLoggedIn(true);
       navigate("/");

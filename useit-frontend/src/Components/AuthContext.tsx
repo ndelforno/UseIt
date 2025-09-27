@@ -49,6 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const login = async (email: string, password: string) => {
     const token = await loginUser(email, password);
+    if (!token) throw new Error("Login failed");
     localStorage.setItem("token", token);
     const user = await getCurrentUser();
     setUser(user);
