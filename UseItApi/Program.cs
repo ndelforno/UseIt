@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using UseItApi.Data;
+using UseItApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var allowedOrigins = builder.Environment.IsDevelopment()
@@ -26,6 +27,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=useit.db"));
 
 builder.Services.AddControllers();
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>

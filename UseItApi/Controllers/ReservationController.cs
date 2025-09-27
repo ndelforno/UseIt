@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UseItApi.Data;
+using UseItApi.Models;
+using UseItApi.Services;
 
 namespace UseItApi.Controllers;
 
@@ -9,15 +11,17 @@ namespace UseItApi.Controllers;
 public partial class ReservationController : ControllerBase
 {
     private readonly AppDbContext _context;
+    private readonly IEmailService _emailService;
 
-    public ReservationController(AppDbContext context)
+    public ReservationController(AppDbContext context, IEmailService emailService)
     {
         _context = context;
+        _emailService = emailService;
     }
 
     [Authorize]
     [HttpPost]
-    public IActionResult Create([FromBody] CreateReservationRequest req)
+    public async Task<IActionResult> Create([FromBody] CreateReservationRequest req)
     {
         if (req == null || req.ToolId == Guid.Empty)
             return BadRequest("Invalid reservation data");
@@ -33,6 +37,9 @@ public partial class ReservationController : ControllerBase
         var tool = _context.Tools.Find(req.ToolId);
         if (tool == null) return NotFound("Tool not found");
         if (tool.OwnerId == renterId) return Forbid();
+
+        var renter = _context.Users.Find(renterId);
+        if (renter == null) return Unauthorized();
 
         // Inclusive overlap check: conflicts if ranges intersect at any date.
         // Consider both Active and Pending reservations as blocking.
@@ -50,7 +57,20 @@ public partial class ReservationController : ControllerBase
         };
 
         _context.Reservations.Add(reservation);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
+
+        var owner = _context.Users.Find(tool.OwnerId);
+        if (owner != null)
+        {
+            try
+            {
+                await _emailService.SendReservationCreatedAsync(owner, tool, reservation, renter);
+            }
+            catch
+            {
+                // Ignore failures so the reservation still succeeds; logging can be added later.
+            }
+        }
 
         return Created($"api/reservation/{reservation.Id}", reservation);
     }
