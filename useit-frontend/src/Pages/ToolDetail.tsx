@@ -233,7 +233,7 @@ export default function ToolDetail() {
                   className="border rounded px-2 h-10"
                 />
                 <button
-                  className="bg-blue-600 text-white rounded px-4 h-10"
+                  className="bg-amber-600 hover:bg-amber-700 text-white rounded px-4 h-10"
                   onClick={handleReserve}
                   disabled={!startDate || !endDate}
                 >
