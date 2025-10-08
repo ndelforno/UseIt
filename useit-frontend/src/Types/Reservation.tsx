@@ -6,6 +6,9 @@ export interface ReservationToolSummary {
   imageUrl?: string;
   price: string;
   area: string;
+  deposit?: string;
+  brand?: string;
+  model?: string;
 }
 
 export interface Reservation {

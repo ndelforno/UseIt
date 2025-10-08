@@ -10,7 +10,9 @@ public class MyToolDto
     public string Price { get; set; } = string.Empty;
     public string PostalCode { get; set; } = string.Empty;
     public string Area { get; set; } = string.Empty;
+    public string Deposit { get; set; } = string.Empty;
+    public string Brand { get; set; } = string.Empty;
+    public string Model { get; set; } = string.Empty;
     public bool IsAvailable { get; set; }
     public int PendingCount { get; set; }
 }
-

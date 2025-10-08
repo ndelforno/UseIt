@@ -40,6 +40,9 @@ public class ToolController : ControllerBase
                 Price = t.Price,
                 PostalCode = t.PostalCode,
                 Area = t.Area,
+                Deposit = t.Deposit,
+                Brand = t.Brand,
+                Model = t.Model,
                 IsAvailable = t.IsAvailable,
                 PendingCount = _context.Reservations.Count(r =>
                     r.ToolId == t.Id && r.Status == nameof(UseItApi.Data.ReservationStatus.Pending))
@@ -109,6 +112,9 @@ public class ToolController : ControllerBase
         existingTool.Price = tool.Price;
         existingTool.PostalCode = tool.PostalCode;
         existingTool.Area = tool.Area;
+        existingTool.Deposit = tool.Deposit;
+        existingTool.Brand = tool.Brand;
+        existingTool.Model = tool.Model;
 
         _context.SaveChanges();
 

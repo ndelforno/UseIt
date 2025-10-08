@@ -113,6 +113,18 @@ export default function MyAccount() {
                   <div className="text-sm text-slate-500">
                     {r.tool?.area} • {r.tool?.price}/day
                   </div>
+                  {(r.tool?.brand || r.tool?.model) && (
+                    <div className="text-xs text-slate-500">
+                      {[r.tool?.brand, r.tool?.model]
+                        .filter(Boolean)
+                        .join(" • ")}
+                    </div>
+                  )}
+                  {r.tool?.deposit && (
+                    <div className="text-xs text-slate-500">
+                      Deposit: {r.tool.deposit}
+                    </div>
+                  )}
                   <div className="text-sm mt-1">
                     {new Date(r.startDate).toLocaleDateString()} —{" "}
                     {new Date(r.endDate).toLocaleDateString()}

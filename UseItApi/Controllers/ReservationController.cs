@@ -110,7 +110,17 @@ public partial class ReservationController : ControllerBase
                     r.StartDate,
                     r.EndDate,
                     r.Status,
-                    Tool = new { t.Id, t.Name, t.ImageUrl, t.Price, t.Area }
+                    Tool = new
+                    {
+                        t.Id,
+                        t.Name,
+                        t.ImageUrl,
+                        t.Price,
+                        t.Area,
+                        t.Deposit,
+                        t.Brand,
+                        t.Model
+                    }
                 })
             .OrderByDescending(r => r.StartDate)
             .ToList();

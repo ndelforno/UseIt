@@ -136,11 +136,28 @@ export default function ToolDetail() {
             {tool.area} • {tool.postalCode}
           </div>
           <div className="text-xl font-medium mt-2">{tool.price}/day</div>
+          {tool.deposit && (
+            <div className="text-sm text-slate-600 mt-1">
+              Deposit: {tool.deposit}
+            </div>
+          )}
           <div className="mt-4">
             <div className="text-xs uppercase tracking-wide text-slate-500">
               Category
             </div>
             <div>{tool.category || "—"}</div>
+          </div>
+          <div className="mt-4">
+            <div className="text-xs uppercase tracking-wide text-slate-500">
+              Brand
+            </div>
+            <div>{tool.brand || "—"}</div>
+          </div>
+          <div className="mt-4">
+            <div className="text-xs uppercase tracking-wide text-slate-500">
+              Model
+            </div>
+            <div>{tool.model || "—"}</div>
           </div>
           <div className="mt-4">
             <div className="text-xs uppercase tracking-wide text-slate-500">

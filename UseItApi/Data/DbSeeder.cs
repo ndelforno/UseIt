@@ -20,7 +20,10 @@ public static class DbSeeder
             .RuleFor(t => t.ImageUrl, f => f.Image.PicsumUrl())
             .RuleFor(t => t.PostalCode, f => f.Address.ZipCode())
             .RuleFor(t => t.Area, f => f.Address.City())
-            .RuleFor(t => t.Price, f => f.Commerce.Price(5, 100) + " USD");
+            .RuleFor(t => t.Price, f => f.Commerce.Price(5, 100) + " USD")
+            .RuleFor(t => t.Deposit, f => f.Random.Bool() ? f.Commerce.Price(20, 200) + " USD" : string.Empty)
+            .RuleFor(t => t.Brand, f => f.Company.CompanyName())
+            .RuleFor(t => t.Model, f => f.Commerce.ProductMaterial());
 
         var tools = faker.Generate(50);
         context.Tools.AddRange(tools);

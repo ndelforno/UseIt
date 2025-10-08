@@ -23,6 +23,9 @@ export default function EditListing() {
   const [price, setPrice] = useState<string>("");
   const [postalCode, setPostalCode] = useState("");
   const [area, setArea] = useState("");
+  const [deposit, setDeposit] = useState<string>("");
+  const [brand, setBrand] = useState("");
+  const [model, setModel] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string>("");
 
@@ -47,6 +50,9 @@ export default function EditListing() {
       setPostalCode(tool.postalCode || "");
       setArea(tool.area || "");
       setImageUrl(tool.imageUrl || "");
+      setDeposit(tool.deposit || "");
+      setBrand(tool.brand || "");
+      setModel(tool.model || "");
     } catch {
       setErrors((prev) => ({ ...prev, form: "Failed to load listing." }));
     }
@@ -58,6 +64,8 @@ export default function EditListing() {
     if (!price.trim()) e.price = "Price is required.";
     else if (Number.isNaN(Number(price)) || Number(price) < 0)
       e.price = "Enter a valid price.";
+    if (deposit && (Number.isNaN(Number(deposit)) || Number(deposit) < 0))
+      e.deposit = "Enter a valid deposit.";
     if (!postalCode.trim()) e.postalCode = "Postal code is required.";
     if (!area.trim()) e.area = "Area is required.";
     setErrors(e);
@@ -98,6 +106,9 @@ export default function EditListing() {
         area: area.trim(),
         imageUrl: newImageUrl.trim(),
         isAvailable: tool.isAvailable,
+        deposit: deposit.trim() ? Number(deposit).toString() : "",
+        brand: brand.trim(),
+        model: model.trim(),
       };
 
       await updateTool(id, updated);
@@ -161,6 +172,26 @@ export default function EditListing() {
       </div>
 
       <div>
+        <input
+          type="text"
+          placeholder="Brand (e.g., DeWalt)"
+          value={brand}
+          onChange={(e) => setBrand(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+
+      <div>
+        <input
+          type="text"
+          placeholder="Model (e.g., DCD791D2)"
+          value={model}
+          onChange={(e) => setModel(e.target.value)}
+          className="w-full p-2 border rounded"
+        />
+      </div>
+
+      <div>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
@@ -192,6 +223,21 @@ export default function EditListing() {
         />
         {errors.price && (
           <p className="text-xs text-red-600 mt-1">{errors.price}</p>
+        )}
+      </div>
+
+      <div>
+        <input
+          type="number"
+          placeholder="Deposit (optional)"
+          value={deposit}
+          onChange={(e) => setDeposit(e.target.value)}
+          className="w-full p-2 border rounded"
+          min="0"
+          step="0.01"
+        />
+        {errors.deposit && (
+          <p className="text-xs text-red-600 mt-1">{errors.deposit}</p>
         )}
       </div>
 

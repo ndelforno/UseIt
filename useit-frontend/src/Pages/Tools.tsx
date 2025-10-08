@@ -56,7 +56,16 @@ export default function Tools() {
     return tools.filter((t) => {
       if (category && t.category !== category) return false;
       if (!inPriceRange(t.price)) return false;
-      const fields = [t.name, t.description, t.category, t.area, t.postalCode]
+      const fields = [
+        t.name,
+        t.description,
+        t.category,
+        t.area,
+        t.postalCode,
+        t.brand,
+        t.model,
+        t.deposit,
+      ]
         .filter(Boolean)
         .join(" ")
         .toLowerCase();

@@ -9,6 +9,9 @@ type Tool = {
   area: string;
   postalCode: string;
   ownerId: string;
+  deposit: string;
+  brand: string;
+  model: string;
 };
 
 type submitTool = Omit<Tool, "id" | "ownerId"> & { id?: string };

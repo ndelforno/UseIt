@@ -12,4 +12,7 @@ public class Tool
     public string Price { get; set; } = "";
     public string PostalCode { get; set; } = "";
     public string Area { get; set; } = "";
+    public string Deposit { get; set; } = "";
+    public string Brand { get; set; } = "";
+    public string Model { get; set; } = "";
 }
