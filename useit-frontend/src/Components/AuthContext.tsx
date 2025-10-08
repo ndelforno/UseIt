@@ -9,6 +9,7 @@ export interface AuthContextType {
   authLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  refreshUser: () => Promise<User | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -18,27 +19,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
-
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(
     !!localStorage.getItem("token")
   );
 
-  // Fetch user from token on initial load
+  const refreshUser = async (): Promise<User | null> => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setUser(null);
+      setIsLoggedIn(false);
+      return null;
+    }
+
+    try {
+      const profile = await getCurrentUser();
+      setUser(profile);
+      setIsLoggedIn(true);
+      return profile;
+    } catch (err) {
+      localStorage.removeItem("token");
+      setUser(null);
+      setIsLoggedIn(false);
+      throw err;
+    }
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        setAuthLoading(false);
-        return;
-      }
-
       try {
-        const user = await getCurrentUser();
-        setUser(user);
+        await refreshUser();
       } catch (err) {
         console.error("Error loading user:", err);
-        localStorage.removeItem("token");
-        setUser(null);
       } finally {
         setAuthLoading(false);
       }
@@ -51,18 +62,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     const token = await loginUser(email, password);
     if (!token) throw new Error("Login failed");
     localStorage.setItem("token", token);
-    const user = await getCurrentUser();
-    setUser(user);
+    await refreshUser();
   };
 
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
+    setIsLoggedIn(false);
   };
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, setIsLoggedIn, user, authLoading, login, logout }}
+      value={{
+        isLoggedIn,
+        setIsLoggedIn,
+        user,
+        authLoading,
+        login,
+        logout,
+        refreshUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

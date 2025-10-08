@@ -1,6 +1,8 @@
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UseItApi.Data;
+using UseItApi.Dto;
 using UseItApi.Models;
 
 namespace UseItApi.Controllers;
@@ -20,7 +22,10 @@ public class UserController : ControllerBase
     [HttpGet]
     public IActionResult GetAllUsers()
     {
-        var users = _context.Users.ToList();
+        var users = _context.Users
+            .AsEnumerable()
+            .Select(UserProfileDto.FromEntity)
+            .ToList();
         return Ok(users);
     }
 
@@ -34,23 +39,25 @@ public class UserController : ControllerBase
             return Unauthorized();
         }
 
-        var user = _context.Users
-            .Where(u => u.Id == userId)
-            .Select(u => new { u.Id, u.Email, u.Name }) // Return only safe fields
-            .FirstOrDefault();
-
-        if (user == null)
+        var userEntity = _context.Users.FirstOrDefault(u => u.Id == userId);
+        if (userEntity == null)
         {
             return NotFound();
         }
+
+        var user = UserProfileDto.FromEntity(userEntity);
 
         return Ok(user);
     }
 
     [Authorize]
     [HttpPut("me")]
-    public IActionResult UpdateCurrentUser([FromBody] User updatedUser)
+    public IActionResult UpdateCurrentUser([FromBody] UpdateUserProfileRequest request)
     {
+        if (request == null)
+        {
+            return BadRequest("Invalid profile data");
+        }
         var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "UserId");
         if (userIdClaim == null || !Guid.TryParse(userIdClaim.Value, out Guid userId))
         {
@@ -63,11 +70,15 @@ public class UserController : ControllerBase
             return NotFound();
         }
 
-        user.Name = updatedUser.Name;
-        user.City = updatedUser.City;
-        user.ProfilePictureUrl = updatedUser.ProfilePictureUrl;
+        user.FirstName = request.FirstName.Trim();
+        user.LastName = request.LastName.Trim();
+        user.Phone = request.Phone.Trim();
+        user.Address = request.Address.Trim();
+        user.City = request.City.Trim();
+        user.ProfilePictureUrl = string.IsNullOrWhiteSpace(request.ProfilePictureUrl) ? null : request.ProfilePictureUrl;
+        user.UserName = UserProfileDto.GetDisplayName(user);
 
         _context.SaveChanges();
-        return Ok(user);
+        return Ok(UserProfileDto.FromEntity(user));
     }
 }

@@ -9,6 +9,7 @@ import Tools from "./Pages/Tools";
 import AddListing from "./Pages/AddListing";
 import EditListing from "./Pages/EditListing";
 import ToolDetail from "./Pages/ToolDetail";
+import CompleteProfile from "./Pages/CompleteProfile";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="tool/:id" element={<ToolDetail />} />
           <Route path="register" element={<Register />} />
           <Route path="login" element={<Login />} />
+          <Route path="complete-profile" element={<CompleteProfile />} />
           <Route path="myaccount" element={<MyAccount />} />
           <Route path="addlisting" element={<AddListing />} />
           <Route path="editlisting/:id" element={<EditListing />} />

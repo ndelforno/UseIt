@@ -6,7 +6,7 @@ import { useAuth } from "../Components/AuthContext";
 export default function Login() {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const navigate = useNavigate();
-  const { isLoggedIn, setIsLoggedIn, login } = useAuth();
+  const { isLoggedIn, login } = useAuth();
 
   if (isLoggedIn) {
     navigate("/");
@@ -17,7 +17,6 @@ export default function Login() {
     try {
       await login(formData.email, formData.password);
       alert("Login successful!");
-      setIsLoggedIn(true);
       navigate("/");
     } catch (err) {
       alert("Login failed");

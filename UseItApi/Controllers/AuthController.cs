@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using UseItApi.Data;
+using UseItApi.Dto;
 using UseItApi.Models;
 
 namespace UseItApi.Controllers;
@@ -36,6 +37,7 @@ public class AuthController : ControllerBase
 
         var passwordHasher = new PasswordHasher<User>();
 
+        NormalizeUser(user);
         user.Password = passwordHasher.HashPassword(user, user.Password);
         _context.Users.Add(user);
         _context.SaveChanges();
@@ -58,6 +60,7 @@ public class AuthController : ControllerBase
             return Unauthorized("Invalid email or password.");
         }
 
+        NormalizeUser(user);
         var token = GenerateJwtToken(user, _configuration);
         return Ok(new { Token = token });
     }
@@ -68,11 +71,13 @@ public class AuthController : ControllerBase
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
+        var displayName = UserProfileDto.GetDisplayName(user);
+
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Email),
             new Claim("UserId", user.Id.ToString()),
-            new Claim("name", user.Name),
+            new Claim("name", displayName),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
@@ -85,6 +90,16 @@ public class AuthController : ControllerBase
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private static void NormalizeUser(User user)
+    {
+        user.FirstName = (user.FirstName ?? string.Empty).Trim();
+        user.LastName = (user.LastName ?? string.Empty).Trim();
+        user.Phone = (user.Phone ?? string.Empty).Trim();
+        user.Address = (user.Address ?? string.Empty).Trim();
+        user.City = (user.City ?? string.Empty).Trim();
+        user.UserName = UserProfileDto.GetDisplayName(user);
     }
 
 }

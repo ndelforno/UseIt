@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AuthForm } from "../Components/AuthForm";
 import { registerUser } from "../api/auth";
 import { useAuth } from "../Components/AuthContext";
@@ -6,18 +6,25 @@ import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, login, authLoading, user } = useAuth();
   const navigate = useNavigate();
 
-  if (isLoggedIn) {
-    navigate("/");
-  }
+  useEffect(() => {
+    if (!authLoading && isLoggedIn) {
+      if (user?.isProfileComplete) {
+        navigate("/", { replace: true });
+      } else {
+        navigate("/complete-profile", { replace: true });
+      }
+    }
+  }, [authLoading, isLoggedIn, user, navigate]);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       await registerUser(formData.email, formData.password);
-      alert("Registered successfully!");
+      await login(formData.email, formData.password);
+      navigate("/complete-profile", { replace: true });
     } catch (err) {
       alert("Registration failed");
     }

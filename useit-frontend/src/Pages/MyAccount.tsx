@@ -26,8 +26,25 @@ export default function MyAccount() {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">My Account</h1>
-      <p>Welcome {user?.email} !</p>
-      <p>Here you can manage your account settings and view your activity.</p>
+      <p>
+        Welcome {user?.userName || user?.displayName || user?.email}! (<span className="text-slate-600">
+          {user?.email}
+        </span>)
+      </p>
+      {!user?.isProfileComplete && (
+        <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded text-sm text-amber-700">
+          Complete your profile so renters know who you are.{' '}
+          <button
+            className="underline"
+            onClick={() => navigate("/complete-profile")}
+          >
+            Update profile
+          </button>
+        </div>
+      )}
+      <p className="mt-3">
+        Here you can manage your account settings and view your activity.
+      </p>
       <h2 className="text-xl font-semibold mt-6 mb-2">My Listings</h2>
       {tools.length === 0 ? (
         <p className="text-sm text-slate-600">You have no listings yet.</p>

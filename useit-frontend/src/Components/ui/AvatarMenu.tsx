@@ -6,11 +6,10 @@ export default function AvatarMenu() {
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
-  const { setIsLoggedIn } = useAuth();
+  const { logout } = useAuth();
 
   const handleSignOut = () => {
-    localStorage.removeItem("token");
-    setIsLoggedIn(false);
+    logout();
     navigate("/");
     setOpen(false);
   };

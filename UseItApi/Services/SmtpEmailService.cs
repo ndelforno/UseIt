@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Mail;
 using Microsoft.Extensions.Options;
 using UseItApi.Data;
+using UseItApi.Dto;
 using UseItApi.Models;
 
 namespace UseItApi.Services;
@@ -23,14 +24,17 @@ public sealed class SmtpEmailService : IEmailService
             Credentials = GetCredentials()
         };
 
+        var ownerName = UserProfileDto.GetDisplayName(owner);
+        var renterName = UserProfileDto.GetDisplayName(renter);
+
         var message = new MailMessage
         {
             From = new MailAddress(_settings.From, _settings.DisplayName),
             Subject = $"New reservation request for {tool.Name}",
             Body = $"""
-                    Hi {owner.Name},
+                    Hi {ownerName},
 
-                    {renter.Name} ({renter.Email}) requested {tool.Name} from {reservation.StartDate:d} to {reservation.EndDate:d}.
+                    {renterName} ({renter.Email}) requested {tool.Name} from {reservation.StartDate:d} to {reservation.EndDate:d}.
 
                     Review the reservation in UseIt to accept or decline.
 

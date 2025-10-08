@@ -1,4 +1,5 @@
 import { api } from "./client";
+import { User } from "@/Types/User";
 
 export const loginUser = async (email: string, password: string) => {
   const res = await api.post("/auth/login", { email, password });
@@ -17,6 +18,5 @@ export const registerUser = async (email: string, password: string) => {
 export const getCurrentUser = async () => {
   const res = await api.get("/user/me");
   if (res.status !== 200) throw new Error("Failed to fetch user");
-  return res.data;
+  return res.data as User;
 };
-

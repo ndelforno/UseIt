@@ -300,7 +300,7 @@ export default function AddListing() {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        className="w-full bg-amber-600 text-white p-2 rounded hover:bg-amber-700 disabled:opacity-50"
       >
         {submitting ? "Submitting..." : "Submit Listing"}
       </button>
