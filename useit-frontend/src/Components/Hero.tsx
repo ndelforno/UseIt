@@ -4,11 +4,30 @@ import { Card } from "./ui/card";
 import { Input } from "./ui/input";
 import { ListingCard } from "./ui/ListingCard";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { fetchTools } from "../api/tools";
+import type { Tool } from "../Types/Tool";
 
 export default function Hero() {
   const navigate = useNavigate();
   const [term, setTerm] = useState("");
+
+  const {
+    data: tools = [],
+    isLoading,
+    isError,
+  } = useQuery<Tool[], Error>({
+    queryKey: ["hero-tools"],
+    queryFn: fetchTools,
+    staleTime: 60_000,
+  });
+
+  const featuredTools = useMemo(() => {
+    if (!tools.length) return [] as Tool[];
+    const shuffled = [...tools].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, 4);
+  }, [tools]);
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -78,22 +97,39 @@ export default function Hero() {
 
           <Card className="bg-white/80 backdrop-blur border shadow-xl p-4">
             <div className="grid grid-cols-2 gap-4">
-              <ListingCard
-                title="Cordless Drill"
-                area="East Danforth"
-                price="$6"
-              />
-              <ListingCard
-                title="Pressure Washer"
-                area="Leslieville"
-                price="$15"
-              />
-              <ListingCard title="Table Saw" area="The Beaches" price="$22" />
-              <ListingCard title="Lawn Aerator" area="Riverdale" price="$12" />
+              {isLoading &&
+                Array.from({ length: 4 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="h-28 animate-pulse rounded-lg bg-slate-200"
+                  />
+                ))}
+
+              {!isLoading && !isError && featuredTools.length > 0 &&
+                featuredTools.map((tool) => (
+                  <ListingCard
+                    key={tool.id}
+                    id={tool.id}
+                    title={tool.name}
+                    area={tool.area}
+                    price={tool.price}
+                    imageUrl={tool.imageUrl}
+                  />
+                ))}
+
+              {!isLoading && (isError || featuredTools.length === 0) && (
+                <div className="col-span-2 text-sm text-slate-500 text-center">
+                  Listings are on their way. Check back shortly!
+                </div>
+              )}
             </div>
-            <p className="mt-4 text-xs text-slate-500 text-center">
-              Sample listings for mock-up only
-            </p>
+            <Button
+              variant="secondary"
+              className="mt-4 w-full"
+              onClick={() => navigate("/tools")}
+            >
+              Browse all tools
+            </Button>
           </Card>
         </div>
       </div>
