@@ -6,8 +6,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid md:grid-cols-4 gap-8 text-sm">
           <div>
-            <div className="flex items-center gap-2">
-              <LogoMark className="w-7 h-7" />
+            <div className="flex items-center gap-3">
+              <LogoMark className="w-16 h-16" />
             </div>
             <p className="mt-3 text-slate-600">Borrow better. Share smarter.</p>
           </div>
