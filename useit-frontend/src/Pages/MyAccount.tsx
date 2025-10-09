@@ -25,7 +25,7 @@ export default function MyAccount() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">My Account</h1>
+      <h1 className="text-2xl font-bold mb-4">My Activities</h1>
       <p>
         Welcome {user?.userName || user?.displayName || user?.email}! (<span className="text-slate-600">
           {user?.email}

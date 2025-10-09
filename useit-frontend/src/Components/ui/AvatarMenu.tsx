@@ -46,11 +46,20 @@ export default function AvatarMenu() {
           <button
             className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
             onClick={() => {
+              navigate("/profile");
+              setOpen(false);
+            }}
+          >
+            My Profile
+          </button>
+          <button
+            className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
+            onClick={() => {
               navigate("/myaccount");
               setOpen(false);
             }}
           >
-            My Account
+            My Activities
           </button>
           <button
             className="w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100"
