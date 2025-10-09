@@ -51,13 +51,13 @@ export default function Categories() {
           {categories.map((c) => (
             <Card
               key={c.t}
-              className="hover:border-amber-400 transition cursor-pointer"
+              className="border border-slate-200 transition hover:border-amber-500 cursor-pointer"
               onClick={() => navigate(`/tools?cat=${encodeURIComponent(c.filter)}`)}
             >
               <CardHeader>
-                <CardImage src={c.i} alt="Toolbox" />
+                <CardImage src={c.i} alt={c.t} />
                 <CardTitle className="text-base">{c.t}</CardTitle>
-                <CardDescription>{c.d}</CardDescription>
+                <CardDescription className="text-slate-600">{c.d}</CardDescription>
               </CardHeader>
             </Card>
           ))}

@@ -18,13 +18,17 @@ import { Badge } from "../Components/ui/badge";
 import { Button } from "../Components/ui/button";
 import { CalendarIcon, CheckCircle2 } from "lucide-react";
 
-const parsePrice = (price?: string) => {
-  if (!price) return null;
-  const match = price.match(/([\d\.,]+)/);
-  if (!match) return null;
-  const numeric = Number(match[1].replace(/,/g, "."));
-  return Number.isFinite(numeric) ? numeric : null;
+const parseCurrency = (amount?: string) => {
+  if (!amount) return null;
+  const match = amount.match(/[-+]?[0-9]*[\.,]?[0-9]+/g);
+  if (!match || match.length === 0) return null;
+  const normalized = match[0].replace(/,/g, "");
+  const value = Number(normalized);
+  return Number.isFinite(value) ? value : null;
 };
+
+const formatCurrency = (value: number | null | undefined) =>
+  value == null ? null : `$${value.toFixed(2)}`;
 
 type DateInputButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   value?: string;
@@ -148,13 +152,12 @@ export default function ToolDetail() {
   if (!tool) return <div className="p-6">Tool not found.</div>;
 
   const isOwner = tool && user && user.id === tool.ownerId;
-  const formattedDeposit = tool.deposit ? tool.deposit : null;
-  const basePricePerDay = parsePrice(tool.price ?? "");
-  const formattedPrice = tool.price
-    ? tool.price.includes("/")
-      ? tool.price
-      : `${tool.price} / day`
-    : "—";
+  const basePricePerDay = parseCurrency(tool.price ?? "");
+  const dailyRateDisplay = basePricePerDay
+    ? `${formatCurrency(basePricePerDay)} / day`
+    : tool.price || "—";
+  const formattedDeposit = formatCurrency(parseCurrency(tool.deposit ?? "")) ??
+    (tool.deposit || null);
   const selectionSummary =
     startDate && endDate
       ? `${new Date(startDate).toLocaleDateString()} → ${new Date(
@@ -241,7 +244,7 @@ export default function ToolDetail() {
                     Daily rate
                   </div>
                   <div className="mt-1 text-2xl font-semibold text-slate-900">
-                    {formattedPrice}
+                    {dailyRateDisplay}
                   </div>
                   {formattedDeposit && (
                     <div className="text-sm text-slate-500 mt-1">
@@ -325,7 +328,7 @@ export default function ToolDetail() {
                   </div>
                   <div className="flex flex-wrap items-end gap-2">
                     <span className="text-3xl font-semibold text-slate-900">
-                      {formattedPrice}
+                      {dailyRateDisplay}
                     </span>
                     {reservationDays > 0 && (
                       <span className="text-sm text-slate-500">
@@ -335,7 +338,8 @@ export default function ToolDetail() {
                   </div>
                   {totalCost && (
                     <div className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-700">
-                      Total due at acceptance: <strong>${totalCost.toFixed(2)}</strong>
+                      Total due at acceptance:{" "}
+                      <strong>{formatCurrency(totalCost)}</strong>
                     </div>
                   )}
                 </div>

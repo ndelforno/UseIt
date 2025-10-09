@@ -4,6 +4,7 @@ import { useAuth } from "../Components/AuthContext";
 import { MyTool } from "../Types/Tool";
 import { Reservation } from "../Types/Reservation";
 import { ListingCard } from "../Components/ui/ListingCard";
+import { Button } from "../Components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { deleteTool, fetchMyTools } from "../api/tools";
 import { fetchMyReservations } from "../api/reservations";
@@ -47,7 +48,18 @@ export default function MyAccount() {
       </p>
       <h2 className="text-xl font-semibold mt-6 mb-2">My Listings</h2>
       {tools.length === 0 ? (
-        <p className="text-sm text-slate-600">You have no listings yet.</p>
+        <div className="mt-3 rounded-2xl border border-dashed border-slate-300 bg-white p-6 text-sm text-slate-600">
+          <p>
+            You haven&apos;t published any listings yet. Share your tools with the
+            community and start earning.
+          </p>
+          <Button
+            className="mt-4"
+            onClick={() => navigate("/addlisting")}
+          >
+            Create your first listing
+          </Button>
+        </div>
       ) : (
         <>
           {error && (

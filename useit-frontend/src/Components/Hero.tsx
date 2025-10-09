@@ -105,7 +105,9 @@ export default function Hero() {
                   />
                 ))}
 
-              {!isLoading && !isError && featuredTools.length > 0 &&
+              {!isLoading &&
+                !isError &&
+                featuredTools.length > 0 &&
                 featuredTools.map((tool) => (
                   <ListingCard
                     key={tool.id}
@@ -124,8 +126,7 @@ export default function Hero() {
               )}
             </div>
             <Button
-              variant="secondary"
-              className="mt-4 w-full"
+              className="mt-4 w-full bg-slate-900 text-white hover:bg-slate-800"
               onClick={() => navigate("/tools")}
             >
               Browse all tools
