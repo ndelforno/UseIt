@@ -7,12 +7,13 @@ interface ListingCardProps {
   price: string;
   imageUrl?: string;
   id?: string | number; // when provided, card is clickable
+  actions?: React.ReactNode;
 }
 
 const normalizePrice = (price: string) =>
   price?.toLowerCase().includes("day") ? price : `${price}/day`;
 
-export function ListingCard({ title, area, price, imageUrl, id }: ListingCardProps) {
+export function ListingCard({ title, area, price, imageUrl, id, actions }: ListingCardProps) {
   const displayPrice = normalizePrice(price);
 
   const imageNode = imageUrl ? (
@@ -35,20 +36,25 @@ export function ListingCard({ title, area, price, imageUrl, id }: ListingCardPro
   );
 
   const content = (
-    <div className="flex flex-col">
+    <div className="flex h-full flex-col">
       {imageNode}
       {description}
+      {actions && (
+        <div className="flex justify-end gap-2 border-t border-slate-200 px-4 py-3 bg-white transition-colors group-hover/link:bg-white">
+          {actions}
+        </div>
+      )}
     </div>
   );
 
   return (
     <Card
-      className={`overflow-hidden border border-slate-200 p-0 transition hover:border-amber-500 hover:shadow-md ${
+      className={`group/card overflow-hidden border border-slate-200 p-0 transition hover:border-amber-500 hover:shadow-md hover:translate-y-[-2px] ${
         id ? "cursor-pointer" : ""
       }`}
     >
       {id ? (
-        <Link to={`/tool/${id}`} className="block h-full">
+        <Link to={`/tool/${id}`} className="group/link block h-full">
           {content}
         </Link>
       ) : (
